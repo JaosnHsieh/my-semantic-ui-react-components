@@ -5,7 +5,7 @@ import { Usage as LoadingSpanUsage } from "./LoadingSpan.js";
 import { Usage as PaginationTableUsage } from "./PaginationTable";
 import { Usage2 as PaginationTableUsage2 } from "./PaginationTable";
 // import LayoutProblem from "./LayoutProblem.js";
-// import { Usage as OrderSelectableList } from "./OrderSelectableList/";
+import { Usage as OrderSelectableList } from "./OrderSelectableList/";
 
 const MyDiv = ({ children, title }) => (
   <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
@@ -16,12 +16,8 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      {/* <MyDiv title={"OrderSelectableList"}>
+      <MyDiv title={"OrderSelectableList"}>
         <OrderSelectableList />
-      </MyDiv> */}
-
-      <MyDiv title={"PaginationTableUsage"}>
-        <PaginationTableUsage />
       </MyDiv>
 
       {/** <LayoutProblem /> */}

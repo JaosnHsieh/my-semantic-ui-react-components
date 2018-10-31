@@ -17,7 +17,7 @@ import {
 import _ from "lodash";
 import LazyInput from "../LazyInput";
 import { orderableListTotalHeight, rightFunctionBarHeight } from "./constants";
-
+import { filterByMultiProperties } from "../utils";
 class LeftItems extends Component {
   state = {
     searchKeyword: ""
@@ -26,32 +26,33 @@ class LeftItems extends Component {
     this.setState({ searchKeyword: value });
   };
 
-  search = (items = [], keword = "", searchProperties = []) =>
-    keyword.length > 0
-      ? _.filter(items, item =>
-          searchProperties.some(key => {
-            return new RegExp(_.escapeRegExp(keyword), "ig").test(item[key]);
-          })
-        )
-      : items;
+  onClickPlusIcon = (item, index) => {
+    const { items } = this.props;
+    const updatedItems = items.slice(0, index).concat(items.slice(index + 1));
+    this.props.onItemsChanged(updatedItems);
+    this.props.onItemMoved(item);
+  };
 
   render() {
     const {
       items = [],
       title,
       renderTitle,
-      inputValue = "",
       searchInputPlaceHolder = "",
       itemValuePropertyName,
       renderItem,
-      onItemAdd,
-      searchItemPropertyName
+      onItemsChanged,
+      searchProperties
     } = this.props;
-
-    const searchedItems = this.search(items, keyword, searchProperties);
+    const { searchKeyword } = this.state;
+    const searchdItems = filterByMultiProperties(
+      items,
+      searchKeyword,
+      searchProperties
+    );
 
     return (
-      <React.Fragment>
+      <div style={{ flex: 1 }}>
         <Segment attached textAlign="left" style={{ borderRight: 0 }}>
           {title && title}
           {renderTitle && renderTitle()}
@@ -65,6 +66,7 @@ class LeftItems extends Component {
           icon="search"
           iconPosition="left"
           placeholder={searchInputPlaceHolder}
+          time={200}
         />
         <Segment
           style={{
@@ -75,18 +77,18 @@ class LeftItems extends Component {
           }}
         >
           <List selection divided celled animated relaxed>
-            {items.length === 0 && (
+            {searchdItems.length === 0 && (
               <Message style={{ margin: "20px" }}>
                 {"No Matched Category to display"}
               </Message>
             )}
-            {items.map((item, i) => (
+            {searchdItems.map((item, i) => (
               <List.Item key={i} style={{ cursor: "default" }}>
                 <List.Content
                   floated="right"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    onItemAdd(item);
+                    this.onClickPlusIcon(item, i);
                   }}
                 >
                   <List.Header>
@@ -104,27 +106,28 @@ class LeftItems extends Component {
             ))}
           </List>
         </Segment>
-      </React.Fragment>
+      </div>
     );
   }
 }
 
 LeftItems.propTypes = {
-  items: PropTypes.array.isRequired,
+  items: PropTypes.array,
   title: PropTypes.string,
   renderTitle: PropTypes.func,
-  inputValue: PropTypes.string,
   searchInputPlaceHolder: PropTypes.string,
-  onInputChange: PropTypes.func,
   itemValuePropertyName: PropTypes.string,
-  renderItemValue: PropTypes.func
+  renderItemValue: PropTypes.func,
+  searchProperties: PropTypes.arrayOf(PropTypes.string),
+  onItemsChanged: PropTypes.func.isRequired,
+  onItemMoved: PropTypes.func.isRequired
 };
 LeftItems.defaultProps = {
   items: [],
   searchInputPlaceHolder: "Search...",
-  onInputChange: PropTypes.func,
   itemValuePropertyName: PropTypes.string,
-  renderItemValue: PropTypes.func
+  renderItemValue: PropTypes.func,
+  searchProperties: []
 };
 
 export default LeftItems;
