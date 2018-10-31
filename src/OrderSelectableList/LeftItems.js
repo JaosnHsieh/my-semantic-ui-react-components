@@ -1,22 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {
-  Header,
-  Progress,
-  Icon,
-  Segment,
-  Input,
-  Dropdown,
-  List,
-  Message,
-  Form,
-  Label,
-  Button,
-  Popup
-} from "semantic-ui-react";
-import _ from "lodash";
+import { Icon, Segment, Input, List, Message } from "semantic-ui-react";
+
 import LazyInput from "../LazyInput";
-import { orderableListTotalHeight, rightFunctionBarHeight } from "./constants";
+import { defaultTotalHeight } from "./constants";
 import { filterByMultiProperties } from "../utils";
 class LeftItems extends Component {
   state = {
@@ -51,6 +38,8 @@ class LeftItems extends Component {
       searchProperties
     );
 
+    const totalHeight = this.props.totalHeight || defaultTotalHeight;
+
     return (
       <div style={{ flex: 1 }}>
         <Segment attached textAlign="left" style={{ borderRight: 0 }}>
@@ -71,8 +60,8 @@ class LeftItems extends Component {
         <Segment
           style={{
             marginTop: 0,
-            height: `${orderableListTotalHeight}px`,
-            maxHeight: `${orderableListTotalHeight}px`,
+            height: `${totalHeight}px`,
+            maxHeight: `${totalHeight}px`,
             overflow: "auto"
           }}
         >
@@ -117,7 +106,7 @@ LeftItems.propTypes = {
   renderTitle: PropTypes.func,
   searchInputPlaceHolder: PropTypes.string,
   itemValuePropertyName: PropTypes.string,
-  renderItemValue: PropTypes.func,
+  renderItem: PropTypes.func,
   searchProperties: PropTypes.arrayOf(PropTypes.string),
   onItemsChanged: PropTypes.func.isRequired,
   onItemMoved: PropTypes.func.isRequired
@@ -125,8 +114,8 @@ LeftItems.propTypes = {
 LeftItems.defaultProps = {
   items: [],
   searchInputPlaceHolder: "Search...",
-  itemValuePropertyName: PropTypes.string,
-  renderItemValue: PropTypes.func,
+  // itemValuePropertyName: '',
+  // renderItem: ,
   searchProperties: []
 };
 

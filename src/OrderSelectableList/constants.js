@@ -1,2 +1,2 @@
-export const orderableListTotalHeight = 500;
-export const rightFunctionBarHeight = 50;
+export const defaultTotalHeight = 500;
+export const defaultRightToolBarHeight = 50;

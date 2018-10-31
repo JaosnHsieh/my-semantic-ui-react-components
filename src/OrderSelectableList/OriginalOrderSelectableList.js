@@ -45,8 +45,8 @@ const mapDispatchToProps = dispatch => ({
   actions: bindActionCreators(actions, dispatch)
 });
 
-const orderableListTotalHeight = 500;
-const rightFunctionBarHeight = 200;
+const totalHeight = 500;
+const rightToolBarHeight = 200;
 
 class ResultTemplateEdit extends React.Component {
   state = {
@@ -349,8 +349,8 @@ class ResultTemplateEdit extends React.Component {
                     <Segment
                       style={{
                         marginTop: 0,
-                        height: `${orderableListTotalHeight}px`,
-                        maxHeight: `${orderableListTotalHeight}px`,
+                        height: `${totalHeight}px`,
+                        maxHeight: `${totalHeight}px`,
                         overflow: "auto"
                       }}
                     >
@@ -411,7 +411,7 @@ class ResultTemplateEdit extends React.Component {
                     {isSelected && (
                       <div
                         style={{
-                          height: `${rightFunctionBarHeight}px`,
+                          height: `${rightToolBarHeight}px`,
                           borderBottom: 0,
                           padding: "0 15px"
                         }}
@@ -489,9 +489,8 @@ class ResultTemplateEdit extends React.Component {
                         borderTop: 0,
                         marginTop: 0,
                         height: isSelected
-                          ? `${orderableListTotalHeight -
-                              rightFunctionBarHeight}px`
-                          : `${orderableListTotalHeight}px`,
+                          ? `${totalHeight - rightToolBarHeight}px`
+                          : `${totalHeight}px`,
                         maxHeight: "500px",
                         overflow: "auto"
                       }}

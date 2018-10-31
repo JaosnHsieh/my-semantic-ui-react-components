@@ -24,11 +24,13 @@ export const filterByMultiProperties = (
 
 export const moveArrayElement = {
   top: (items, index) => {
-    if (items.length <= 1 || index === 0)
+    if (items.length <= 1 || index === 0) {
       return {
         items,
         itemIndex: index
       };
+    }
+
     return {
       items: [
         items[index],
@@ -37,7 +39,6 @@ export const moveArrayElement = {
       ],
       itemIndex: 0
     };
-    return;
   },
   up: (items, index) => {
     if (items.length <= 1 || index === 0) {
