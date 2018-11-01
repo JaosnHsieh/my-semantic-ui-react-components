@@ -1,15 +1,33 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { Message } from "semantic-ui-react";
 import LeftItems from "./LeftItems";
 import RightItems from "./RightItems";
 import { defaultTotalHeight, defaultRightToolBarHeight } from "./constants";
 
 class OrderableList extends Component {
-  onLeftItemsChanged = items => {
-    this.props.onLeftItemsChanged(items);
+  state = {
+    isShowingRightItemsLimitError: false
   };
+
+  onLeftItemsChanged = items => {
+    const { rightItemsLimitNumber: r } = this.props;
+    if (r && this.props.rightItems.length + 1 >= r) {
+      console.log("------------------qq");
+      this.showRightLimitErrorInterval();
+    } else {
+      this.props.onLeftItemsChanged(items);
+    }
+  };
+
   onLeftItemMoved = item => {
-    this.props.onRightItemsChanged(this.props.rightItems.concat(item));
+    const { rightItemsLimitNumber: r } = this.props;
+    if (r && this.props.rightItems.length + 1 >= r) {
+      console.log("------------------gg");
+      this.showRightLimitErrorInterval();
+    } else {
+      this.props.onRightItemsChanged(this.props.rightItems.concat(item));
+    }
   };
   onRightItemsChanged = items => {
     this.props.onRightItemsChanged(items);
@@ -17,42 +35,63 @@ class OrderableList extends Component {
   onRightItemRemoved = item => {
     this.props.onLeftItemsChanged(this.props.leftItems.concat(item));
   };
+  showRightLimitErrorInterval = (intervalMs = 3000) => {
+    console.log("---@@ showRightLimitErrorInterval");
+    this.setState({ isShowingRightItemsLimitError: true }, () => {
+      setTimeout(() => {
+        this.setState({ isShowingRightItemsLimitError: false });
+      }, intervalMs);
+    });
+  };
 
   render() {
     return (
-      <div style={{ display: "flex" }}>
-        <LeftItems
-          items={this.props.leftItems}
-          // searchProperties={["id", "name"]}
-          // title={"title"}
-          // renderTitle={() => <div>render title</div>}
-          // searchInputPlaceHolder={"placholder...."}
-          // renderItem,
-          // itemValuePropertyName={"name"}
-          {...this.props.leftItemsProps}
-          totalHeight={this.props.totalHeight || defaultTotalHeight}
-          onItemsChanged={this.onLeftItemsChanged}
-          onItemMoved={this.onLeftItemMoved}
-        />
-        <RightItems
-          items={this.props.rightItems}
-          // title={"right title"}
-          // renderTitle={()=>{}}
-          // searchProperties={["id", "name"]}
-          // renderTitle={() => <div>render title</div>}
-          // searchInputPlaceHolder={"placholder...."}
-          // onInputChange={() => alert("on input change")}
-          // renderItem,
-          // itemValuePropertyName={"name"}
-          {...this.props.rightItemsProps}
-          renderSelectedToolBar={this.props.renderSelectedToolBar}
-          rightToolBarHeight={
-            this.props.rightToolBarHeight || defaultRightToolBarHeight
-          }
-          totalHeight={this.props.totalHeight || defaultTotalHeight}
-          onItemsChanged={this.onRightItemsChanged}
-          onItemRemoved={this.onRightItemRemoved}
-        />
+      <div>
+        <div style={{ display: "flex" }}>
+          {this.state.isShowingRightItemsLimitError && (
+            <Message
+              negative
+              onDismiss={this.handleDismiss}
+              header={"You've reached the limit"}
+              content={`The limit number of selected charts is ${
+                this.props.rightItemsLimitNumber
+              }.`}
+            />
+          )}
+
+          <LeftItems
+            items={this.props.leftItems}
+            // searchProperties={["id", "name"]}
+            // title={"title"}
+            // renderTitle={() => <div>render title</div>}
+            // searchInputPlaceHolder={"placholder...."}
+            // renderItem,
+            // itemValuePropertyName={"name"}
+            {...this.props.leftItemsProps}
+            totalHeight={this.props.totalHeight || defaultTotalHeight}
+            onItemsChanged={this.onLeftItemsChanged}
+            onItemMoved={this.onLeftItemMoved}
+          />
+          <RightItems
+            items={this.props.rightItems}
+            // title={"right title"}
+            // renderTitle={()=>{}}
+            // searchProperties={["id", "name"]}
+            // renderTitle={() => <div>render title</div>}
+            // searchInputPlaceHolder={"placholder...."}
+            // onInputChange={() => alert("on input change")}
+            // renderItem,
+            // itemValuePropertyName={"name"}
+            {...this.props.rightItemsProps}
+            renderSelectedToolBar={this.props.renderSelectedToolBar}
+            rightToolBarHeight={
+              this.props.rightToolBarHeight || defaultRightToolBarHeight
+            }
+            totalHeight={this.props.totalHeight || defaultTotalHeight}
+            onItemsChanged={this.onRightItemsChanged}
+            onItemRemoved={this.onRightItemRemoved}
+          />
+        </div>
       </div>
     );
   }
@@ -67,7 +106,8 @@ OrderableList.propTypes = {
   rightItemsProps: PropTypes.object, // refer to RightItems props defs,
   totalHeight: PropTypes.number,
   rightToolBarHeight: PropTypes.number,
-  renderSelectedToolBar: PropTypes.func // renderSelectedToolBar={({moveButtonGroup, activeItem, activeItemIndex})=>(<div></div>)}
+  renderSelectedToolBar: PropTypes.func, // renderSelectedToolBar={({moveButtonGroup, activeItem, activeItemIndex})=>(<div></div>)}
+  rightItemsLimitNumber: PropTypes.number
 };
 
 OrderableList.defaultPropTypes = {
@@ -99,6 +139,7 @@ export const Usage = class Usage extends Component {
         }}
         leftItemsProps={{ title: "left title", itemValuePropertyName: "name" }}
         rightItems={this.state.rightItems}
+        rightItemsLimitNumber={2}
         onRightItemsChanged={items => {
           this.setState({ rightItems: items }, () => {
             console.log("on right items changed items", items);
