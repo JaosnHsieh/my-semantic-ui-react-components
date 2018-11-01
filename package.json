@@ -10,7 +10,8 @@
     "react-dom": "16.5.2",
     "react-scripts": "2.0.3",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "0.83.0"
+    "semantic-ui-react": "0.83.0",
+    "prop-types":"15.5.10"
   },
   "devDependencies": {},
   "scripts": {

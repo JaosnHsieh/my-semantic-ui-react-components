@@ -26,7 +26,7 @@ class LazyInput extends React.Component {
     this.onChange();
   }
   render() {
-    const { as, value, onChange, ...restProps } = this.props;
+    const { as, time, value, onChange, ...restProps } = this.props;
     return as ? (
       React.createElement(as, {
         value: this.state.value,

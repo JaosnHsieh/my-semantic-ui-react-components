@@ -1,23 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import {
-  Header,
-  Progress,
-  Icon,
-  Segment,
-  Input,
-  Dropdown,
-  List,
-  Message,
-  Form,
-  Label,
-  Button,
-  Popup
-} from "semantic-ui-react";
-import _ from "lodash";
-import LazyInput from "../LazyInput";
-import { orderableListTotalHeight, rightFunctionBarHeight } from "./constants";
+import { Icon, Segment, Input, List, Message } from "semantic-ui-react";
 
+import LazyInput from "../LazyInput";
+import { defaultTotalHeight } from "./constants";
+import { filterByMultiProperties } from "../utils";
 class LeftItems extends Component {
   state = {
     searchKeyword: ""
@@ -26,35 +13,38 @@ class LeftItems extends Component {
     this.setState({ searchKeyword: value });
   };
 
-  search = (items = [], keword = "", searchProperties = []) =>
-    keyword.length > 0
-      ? _.filter(items, item =>
-          searchProperties.some(key => {
-            return new RegExp(_.escapeRegExp(keyword), "ig").test(item[key]);
-          })
-        )
-      : items;
+  onClickPlusIcon = (item, index) => {
+    const { items } = this.props;
+    const updatedItems = items.slice(0, index).concat(items.slice(index + 1));
+    this.props.onItemsChanged(updatedItems);
+    this.props.onItemMoved(item);
+  };
 
   render() {
     const {
       items = [],
       title,
       renderTitle,
-      inputValue = "",
       searchInputPlaceHolder = "",
       itemValuePropertyName,
       renderItem,
-      onItemAdd,
-      searchItemPropertyName
+      onItemsChanged,
+      searchProperties
     } = this.props;
+    const { searchKeyword } = this.state;
+    const searchedItems = filterByMultiProperties(
+      items,
+      searchKeyword,
+      searchProperties
+    );
 
-    const searchedItems = this.search(items, keyword, searchProperties);
+    const totalHeight = this.props.totalHeight || defaultTotalHeight;
 
     return (
-      <React.Fragment>
+      <div style={{ flex: 1 }}>
         <Segment attached textAlign="left" style={{ borderRight: 0 }}>
           {title && title}
-          {renderTitle && renderTitle()}
+          {renderTitle && renderTitle(searchedItems)}
         </Segment>
 
         <LazyInput
@@ -65,28 +55,29 @@ class LeftItems extends Component {
           icon="search"
           iconPosition="left"
           placeholder={searchInputPlaceHolder}
+          time={200}
         />
         <Segment
           style={{
             marginTop: 0,
-            height: `${orderableListTotalHeight}px`,
-            maxHeight: `${orderableListTotalHeight}px`,
+            height: `${totalHeight}px`,
+            maxHeight: `${totalHeight}px`,
             overflow: "auto"
           }}
         >
           <List selection divided celled animated relaxed>
-            {items.length === 0 && (
+            {searchedItems.length === 0 && (
               <Message style={{ margin: "20px" }}>
                 {"No Matched Category to display"}
               </Message>
             )}
-            {items.map((item, i) => (
+            {searchedItems.map((item, i) => (
               <List.Item key={i} style={{ cursor: "default" }}>
                 <List.Content
                   floated="right"
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    onItemAdd(item);
+                    this.onClickPlusIcon(item, i);
                   }}
                 >
                   <List.Header>
@@ -104,27 +95,28 @@ class LeftItems extends Component {
             ))}
           </List>
         </Segment>
-      </React.Fragment>
+      </div>
     );
   }
 }
 
 LeftItems.propTypes = {
-  items: PropTypes.array.isRequired,
+  items: PropTypes.array,
   title: PropTypes.string,
   renderTitle: PropTypes.func,
-  inputValue: PropTypes.string,
   searchInputPlaceHolder: PropTypes.string,
-  onInputChange: PropTypes.func,
   itemValuePropertyName: PropTypes.string,
-  renderItemValue: PropTypes.func
+  renderItem: PropTypes.func,
+  searchProperties: PropTypes.arrayOf(PropTypes.string),
+  onItemsChanged: PropTypes.func.isRequired,
+  onItemMoved: PropTypes.func.isRequired
 };
 LeftItems.defaultProps = {
   items: [],
   searchInputPlaceHolder: "Search...",
-  onInputChange: PropTypes.func,
-  itemValuePropertyName: PropTypes.string,
-  renderItemValue: PropTypes.func
+  // itemValuePropertyName: '',
+  // renderItem: ,
+  searchProperties: []
 };
 
 export default LeftItems;
