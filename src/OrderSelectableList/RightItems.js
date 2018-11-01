@@ -160,7 +160,7 @@ class RightItems extends Component {
       <div style={{ flex: 1 }}>
         <Segment attached textAlign="right" style={{ borderLeft: 0 }}>
           {title && title}
-          {renderTitle && renderTitle()}
+          {renderTitle && renderTitle(searchedItems)}
         </Segment>
 
         <LazyInput

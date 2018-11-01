@@ -32,7 +32,7 @@ class LeftItems extends Component {
       searchProperties
     } = this.props;
     const { searchKeyword } = this.state;
-    const searchdItems = filterByMultiProperties(
+    const searchedItems = filterByMultiProperties(
       items,
       searchKeyword,
       searchProperties
@@ -44,7 +44,7 @@ class LeftItems extends Component {
       <div style={{ flex: 1 }}>
         <Segment attached textAlign="left" style={{ borderRight: 0 }}>
           {title && title}
-          {renderTitle && renderTitle()}
+          {renderTitle && renderTitle(searchedItems)}
         </Segment>
 
         <LazyInput
@@ -66,12 +66,12 @@ class LeftItems extends Component {
           }}
         >
           <List selection divided celled animated relaxed>
-            {searchdItems.length === 0 && (
+            {searchedItems.length === 0 && (
               <Message style={{ margin: "20px" }}>
                 {"No Matched Category to display"}
               </Message>
             )}
-            {searchdItems.map((item, i) => (
+            {searchedItems.map((item, i) => (
               <List.Item key={i} style={{ cursor: "default" }}>
                 <List.Content
                   floated="right"
