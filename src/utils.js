@@ -22,6 +22,11 @@ export const filterByMultiProperties = (
     : items;
 };
 
+
+/**
+ * Usage: moveArrayElement().top(["1","2","3"],2);
+ * @return { items:{[Object]}, itemIndex:{number}}
+ */
 export const moveArrayElement = {
   top: (items, index) => {
     if (items.length <= 1 || index === 0) {

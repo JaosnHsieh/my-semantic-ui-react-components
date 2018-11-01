@@ -99,8 +99,7 @@ class RightItems extends Component {
       renderItem,
       onItemsChanged,
       renderSelectedToolBar,
-      searchProperties,
-      renderSelectdToolBar
+      searchProperties
     } = this.props;
     const { searchKeyword } = this.state;
     const searchedItems = filterByMultiProperties(
@@ -182,13 +181,13 @@ class RightItems extends Component {
               borderBottom: 0
             }}
           >
-            {renderSelectdToolBar
-              ? renderSelectdToolBar({
+            {renderSelectedToolBar
+              ? renderSelectedToolBar({
                   moveButtonGroup,
                   activeItem: this.props.items[
                     this.state.activeSelectedItemIndex
                   ],
-                  renderTitle: this.state.activeSelectedItemIndex
+                  activeItemIndex: this.state.activeSelectedItemIndex
                 })
               : moveButtonGroup}
           </div>
@@ -197,7 +196,9 @@ class RightItems extends Component {
         <Segment
           style={{
             marginTop: 0,
-            height: `${totalHeight}px`,
+            height: isSelected
+              ? `${totalHeight - rightToolBarHeight}px`
+              : `${totalHeight}px`,
             maxHeight: `${totalHeight}px`,
             overflow: "auto"
           }}
@@ -253,7 +254,7 @@ RightItems.propTypes = {
   itemValuePropertyName: PropTypes.string,
   onItemsChanged: PropTypes.func.isRequired,
   onItemRemoved: PropTypes.func,
-  renderSelectdToolBar: PropTypes.func
+  renderSelectedToolBar: PropTypes.func
 };
 RightItems.defaultProps = {
   items: [],
