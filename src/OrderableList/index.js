@@ -12,8 +12,7 @@ class OrderableList extends Component {
 
   onLeftItemsChanged = items => {
     const { rightItemsLimitNumber: r } = this.props;
-    if (r && this.props.rightItems.length + 1 >= r) {
-      console.log("------------------qq");
+    if (r && this.props.rightItems.length + 1 > r) {
       this.showRightLimitErrorInterval();
     } else {
       this.props.onLeftItemsChanged(items);
@@ -22,8 +21,7 @@ class OrderableList extends Component {
 
   onLeftItemMoved = item => {
     const { rightItemsLimitNumber: r } = this.props;
-    if (r && this.props.rightItems.length + 1 >= r) {
-      console.log("------------------gg");
+    if (r && this.props.rightItems.length + 1 > r) {
       this.showRightLimitErrorInterval();
     } else {
       this.props.onRightItemsChanged(this.props.rightItems.concat(item));
@@ -36,29 +34,31 @@ class OrderableList extends Component {
     this.props.onLeftItemsChanged(this.props.leftItems.concat(item));
   };
   showRightLimitErrorInterval = (intervalMs = 3000) => {
-    console.log("---@@ showRightLimitErrorInterval");
-    this.setState({ isShowingRightItemsLimitError: true }, () => {
-      setTimeout(() => {
-        this.setState({ isShowingRightItemsLimitError: false });
-      }, intervalMs);
-    });
+    const { isShowingRightItemsLimitError: s } = this.state;
+    if (!s) {
+      this.setState({ isShowingRightItemsLimitError: true }, () => {
+        setTimeout(() => {
+          this.setState({ isShowingRightItemsLimitError: false });
+        }, intervalMs);
+      });
+    }
   };
 
   render() {
     return (
       <div>
-        <div style={{ display: "flex" }}>
-          {this.state.isShowingRightItemsLimitError && (
-            <Message
-              negative
-              onDismiss={this.handleDismiss}
-              header={"You've reached the limit"}
-              content={`The limit number of selected charts is ${
-                this.props.rightItemsLimitNumber
-              }.`}
-            />
-          )}
+        {this.state.isShowingRightItemsLimitError && (
+          <Message
+            negative
+            onDismiss={this.handleDismiss}
+            header={"You've reached the limit."}
+            content={`The limit number of selected charts is ${
+              this.props.rightItemsLimitNumber
+            }.`}
+          />
+        )}
 
+        <div style={{ display: "flex" }}>
           <LeftItems
             items={this.props.leftItems}
             // searchProperties={["id", "name"]}

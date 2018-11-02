@@ -6,6 +6,7 @@ import { Usage as PaginationTableUsage } from "./PaginationTable";
 import { Usage2 as PaginationTableUsage2 } from "./PaginationTable";
 // import LayoutProblem from "./LayoutProblem.js";
 import { Usage as OrderableList } from "./OrderableList";
+import { Usage as PaginatedTableChart } from "./PaginatedTableChart";
 
 const MyDiv = ({ children, title }) => (
   <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
@@ -16,9 +17,12 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      <MyDiv title={"OrderableList"}>
-        <OrderableList />
+      <MyDiv title={`PaginatedTableChart`}>
+        <PaginatedTableChart />
       </MyDiv>
+      {/* <MyDiv title={"OrderableList"}>
+        <OrderableList />
+      </MyDiv> */}
 
       {/** <LayoutProblem /> */}
       {/**
