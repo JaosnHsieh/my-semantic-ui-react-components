@@ -22,7 +22,7 @@ class PaginationTable extends Component {
     this.state = {
       currentPage: 1,
       sorting: {
-        currentSortingField: this.props.initSortingField,
+        currentSortingFields: this.props.initSortingFields,
         asc: this.props.initSortingOrderAsc
       },
       searchBarText: ""
@@ -112,30 +112,36 @@ class PaginationTable extends Component {
       searchKeyProperties,
       itemsPerPage,
       isImmutable,
-      initSortingField,
+      initSortingFields,
       initSortingOrderAsc,
+      items,
       ...props
     } = this.props;
-    let { items } = this.props;
+    let showingItems = items;
     const { searchBarText } = this.state;
-    const { currentSortingField, asc } = this.state.sorting;
-    if (currentSortingField) {
-      items = _.orderBy(items, [currentSortingField], [asc ? "asc" : "desc"]);
+    const { currentSortingFields, asc } = this.state.sorting;
+
+    if (currentSortingFields) {
+      showingItems = _.orderBy(showingItems, currentSortingFields.join("."), [
+        asc ? "asc" : "desc"
+      ]);
     }
-    items = this.isSearchable()
-      ? (items = filterByMultiProperties(
-          items,
+    showingItems = this.isSearchable()
+      ? (showingItems = filterByMultiProperties(
+          showingItems,
           searchBarText,
           searchKeyProperties
         ))
-      : items;
-    items = pagination ? this.paginate(items) : items;
+      : showingItems;
+    showingItems = pagination ? this.paginate(showingItems) : showingItems;
 
     const SearchBar = this.isSearchable() && (
       <Input
-        label={"Search"}
+        icon="search"
+        iconPosition="left"
+        // label={"Search"}
         fluid
-        placeholder={`Search ${searchKeyProperties.join(", ")}`}
+        placeholder={`Search ${searchKeyProperties.join(", ")} ...`}
         value={this.state.searchBarText}
         onChange={this.onSearchBarTextChange}
       />
@@ -143,18 +149,18 @@ class PaginationTable extends Component {
 
     const TableEle = (
       <React.Fragment>
-        <Table {...props} unstackable>
+        <Table unstackable style={{ margin: "0.5px 0" }} {...props}>
           <Table.Header>
             <Table.Row>
               {columnOption.map((c, i) => (
                 <Table.HeaderCell
-                  style={{ cursor: c.sortingField ? "pointer" : "init" }}
+                  style={{ cursor: c.sortingFields ? "pointer" : "init" }}
                   onClick={() => {
-                    if (!isImmutable && c.sortingField) {
+                    if (!isImmutable && c.sortingFields) {
                       this.setState(prevState => ({
                         sorting: {
                           ...prevState.sorting,
-                          currentSortingField: c.sortingField,
+                          currentSortingFields: [...c.sortingFields],
                           asc: !prevState.sorting.asc
                         }
                       }));
@@ -165,18 +171,17 @@ class PaginationTable extends Component {
                   {c.header || ""}
                   {!isImmutable &&
                     c &&
-                    c.sortingField &&
-                    c.sortingField ===
-                      this.state.sorting.currentSortingField && (
+                    c.sortingFields &&
+                    _.isEqual(c.sortingFields, currentSortingFields) && (
                       <SortingIcon asc={this.state.sorting.asc} />
                     )}
                 </Table.HeaderCell>
               ))}
             </Table.Row>
           </Table.Header>
-          {items.length > 0 && (
+          {showingItems.length > 0 && (
             <Table.Body>
-              {items.map((item, i) => (
+              {showingItems.map((item, i) => (
                 <Table.Row
                   // styleName={item.isTargetItem ? "background-fadeout" : ""}
                   // id={`project_${item._id}`}
@@ -206,46 +211,54 @@ class PaginationTable extends Component {
           )}
         </Table>
 
-        {items.length === 0 && (
-          <Segment>
-            <Message>{"No Items to display"}</Message>
+        {showingItems.length === 0 && (
+          <Segment style={{ margin: 0 }}>
+            {searchBarText ? (
+              <Message warning>
+                {`No result found for query "${searchBarText}"`}
+              </Message>
+            ) : (
+              <Message>{`No items to display`}</Message>
+            )}
           </Segment>
         )}
       </React.Fragment>
     );
 
-    const PaginationBar = pagination && (
-      <Menu pagination>
-        <Menu.Item
-          as="a"
-          icon
-          onClick={this.prevPage}
-          disabled={!this.hasPrevPage()}
-        >
-          <Icon name="chevron left" />
-        </Menu.Item>
-        {this.pageNumArray().map((num, i) => (
+    const PaginationBar =
+      pagination &&
+      (showingItems.length > 0 ? (
+        <Menu pagination>
           <Menu.Item
             as="a"
-            key={i}
-            onClick={() => {
-              this.selectPage(num);
-            }}
-            active={num === this.state.currentPage}
+            icon
+            onClick={this.prevPage}
+            disabled={!this.hasPrevPage()}
           >
-            {num}
+            <Icon name="chevron left" />
           </Menu.Item>
-        ))}
-        <Menu.Item
-          as="a"
-          icon
-          onClick={this.nextPage}
-          disabled={!this.hasNextPage()}
-        >
-          <Icon name="chevron right" />
-        </Menu.Item>
-      </Menu>
-    );
+          {this.pageNumArray().map((num, i) => (
+            <Menu.Item
+              as="a"
+              key={i}
+              onClick={() => {
+                this.selectPage(num);
+              }}
+              active={num === this.state.currentPage}
+            >
+              {num}
+            </Menu.Item>
+          ))}
+          <Menu.Item
+            as="a"
+            icon
+            onClick={this.nextPage}
+            disabled={!this.hasNextPage()}
+          >
+            <Icon name="chevron right" />
+          </Menu.Item>
+        </Menu>
+      ) : null);
     return typeof this.props.children === "function" ? (
       this.props.children({ SearchBar, TableEle, PaginationBar })
     ) : (
@@ -263,7 +276,7 @@ PaginationTable.propTypes = {
       header: PropTypes.string,
       cellValue: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
       onItemClick: PropTypes.func,
-      sortingField: PropTypes.string
+      sortingFields: PropTypes.arrayOf(PropTypes.string)
     })
   ),
   items: PropTypes.any,
@@ -271,7 +284,7 @@ PaginationTable.propTypes = {
   pagination: PropTypes.bool,
   isImmutable: PropTypes.bool,
   currentPage: PropTypes.number,
-  initSortingField: PropTypes.string,
+  initSortingFields: PropTypes.arrayOf(PropTypes.string),
   initSortingOrderAsc: PropTypes.bool,
   searchKeyProperties: PropTypes.arrayOf(PropTypes.string)
 };
@@ -279,7 +292,7 @@ PaginationTable.defaultProps = {
   itemsPerPage: 10,
   pagination: false,
   isImmutable: false,
-  initSortingField: null,
+  initSortingFields: [],
   initSortingOrderAsc: true,
   searchKeyProperties: []
 };
@@ -291,15 +304,24 @@ export const Usage = () => (
     items={[
       {
         id: 1,
-        name: "test-item-1 ???"
+        name: "test-item-1 ???",
+        nestedSortingTestProps: {
+          s: 5
+        }
       },
       {
         id: 2,
-        name: "test-item-2"
+        name: "test-item-2",
+        nestedSortingTestProps: {
+          s: 3
+        }
       },
       {
         id: 3,
-        name: "test-item-3"
+        name: "test-item-3",
+        nestedSortingTestProps: {
+          s: 2
+        }
       }
     ]}
     columnOption={[
@@ -309,7 +331,7 @@ export const Usage = () => (
         onItemClick: item => {
           alert(item.id);
         },
-        sortingField: "id"
+        sortingFields: ["id"]
       },
       {
         header: "Name~",
@@ -320,13 +342,18 @@ export const Usage = () => (
         onItemClick: item => {
           alert(item.name);
         },
-        sortingField: "name"
+        sortingFields: ["name"]
+      },
+      {
+        header: "NestingSortTest~",
+        cellValue: item => item.nestedSortingTestProps.s,
+        sortingFields: ["nestedSortingTestProps", "s"]
       }
     ]}
-    initSortingField={"id"}
+    initSortingFields={["id"]}
     initSortingOrderAsc={false}
     pagination
-    itemsPerPage={2}
+    itemsPerPage={5}
     searchKeyProperties={["id", "name"]}
   />
 );
@@ -354,7 +381,7 @@ export const Usage2 = () => (
         onItemClick: item => {
           alert(item.id);
         },
-        sortingField: "id"
+        sortingFields: ["id"]
       },
       {
         header: "Name~",
@@ -365,10 +392,10 @@ export const Usage2 = () => (
         onItemClick: item => {
           alert(item.name);
         },
-        sortingField: "name"
+        sortingFields: "name"
       }
     ]}
-    initSortingField={"id"}
+    initSortingFields={["id"]}
     initSortingOrderAsc={false}
     pagination
     itemsPerPage={2}
