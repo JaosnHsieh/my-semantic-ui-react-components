@@ -1,46 +1,78 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import "semantic-ui-css/semantic.min.css";
-import { Usage as LoadingSpanUsage } from "./LoadingSpan.js";
-import { Usage as PaginationTableUsage } from "./PaginationTable";
-import { Usage2 as PaginationTableUsage2 } from "./PaginationTable";
-// import LayoutProblem from "./LayoutProblem.js";
-import { Usage as OrderableList } from "./OrderableList";
-import { Usage as PaginatedTableChart } from "./PaginatedTableChart";
+import { render } from "react-dom";
+import { makeData, Logo, Tips } from "./Utils";
+import { Table } from "semantic-ui-react";
 
-const MyDiv = ({ children, title }) => (
-  <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
-    {title && <h2>{title}</h2>}
-    {children}
-  </div>
-);
-function App() {
-  return (
-    <div className="App">
-      <MyDiv title={`PaginatedTableChart`}>
-        <PaginatedTableChart />
-      </MyDiv>
-      {/* <MyDiv title={"OrderableList"}>
-        <OrderableList />
-      </MyDiv> */}
+// Import React Table
+import ReactTable from "react-table";
+import "react-table/react-table.css";
 
-      {/** <LayoutProblem /> */}
-      {/**
-      <MyDiv title={"PaginationTableUsage2 ( render props )"}>
-        <PaginationTableUsage2 />
-      </MyDiv>
-
-      <MyDiv title={"PaginationTableUsage"}>
-        <PaginationTableUsage />
-      </MyDiv>
-
-      <MyDiv title={"LoadingSpan Usage"}>
-        <LoadingSpanUsage />
-      </MyDiv>
-       */}
-    </div>
-  );
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      data: makeData()
+    };
+  }
+  render() {
+    const { data } = this.state;
+    return (
+      <div>
+        <ReactTable
+          TableComponent={props => <Table {...props} />}
+          TrComponent={props => <Table.Row {...props} />}
+          TdComponent={props => <Table.Cell {...props} />}
+          TbodyComponent={props => <Table.Body {...props} />}
+          TheadComponent={props => <Table.Header {...props} />}
+          ThComponent={props => <Table.HeaderCell {...props} />}
+          data={data}
+          columns={[
+            {
+              Header: "Name",
+              columns: [
+                {
+                  Header: "First Name",
+                  accessor: "firstName"
+                },
+                {
+                  Header: "Last Name",
+                  id: "lastName",
+                  accessor: d => d.lastName
+                }
+              ]
+            },
+            {
+              Header: "Info",
+              columns: [
+                {
+                  Header: "Age",
+                  accessor: "age"
+                },
+                {
+                  Header: "Status",
+                  accessor: "status"
+                }
+              ]
+            },
+            {
+              Header: "Stats",
+              columns: [
+                {
+                  Header: "Visits",
+                  accessor: "visits"
+                }
+              ]
+            }
+          ]}
+          defaultPageSize={10}
+          className="-striped -highlight"
+        />
+        <br />
+        <Tips />
+        <Logo />
+      </div>
+    );
+  }
 }
 
-const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+render(<App />, document.getElementById("root"));
