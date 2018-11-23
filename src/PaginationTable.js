@@ -11,6 +11,7 @@ import {
 } from "semantic-ui-react";
 import _ from "lodash";
 import styles from "./PaginationTable.css";
+import LazyInput from "./LazyInput";
 import { filterByMultiProperties, uuid } from "./utils";
 
 const SortingIcon = ({ asc = false }) =>
@@ -29,7 +30,10 @@ class PaginationTable extends Component {
       accordionViewExpandedUuids: []
     };
     if (!!this.props.accordionRowRender && props.items) {
-      props.items.forEach(i => (i.uuid = uuid()));
+      props.items.forEach((item, index) => {
+        item.uuid = uuid();
+        return item;
+      });
     }
   }
   componentWillReceiveProps(nextProps) {
@@ -44,7 +48,7 @@ class PaginationTable extends Component {
 
     if (!!this.props.accordionRowRender) {
       if (nextProps.items !== this.props.items) {
-        nextProps.items.forEach(i => (i.uuid = uuid()));
+        nextProps.items.forEach((item, index) => (item.uuid = uuid()));
       }
     }
   }
@@ -72,14 +76,13 @@ class PaginationTable extends Component {
     return items.slice(startIndex, endIndex);
   };
 
-  isSearchable = () => this.props.searchKeyProperties.length > 0;
-  onSearchBarTextChange = (e, { value }) =>
-    this.setState({ searchBarText: value });
+  hasSearchKeys = () => this.props.searchKeyProperties.length > 0;
+  onSearchBarTextChange = value => this.setState({ searchBarText: value });
 
   totalPageNum = () => {
     const { itemsPerPage, isImmutable } = this.props;
     let { items } = this.props;
-    if (this.isSearchable) {
+    if (this.hasSearchKeys) {
       items = filterByMultiProperties(
         items,
         this.state.searchBarText,
@@ -125,6 +128,8 @@ class PaginationTable extends Component {
       initSortingFields,
       initSortingOrderAsc,
       accordionRowRender,
+      customSearchFilterCreator,
+      searchBarPlaceholder,
       items,
       ...props
     } = this.props;
@@ -137,25 +142,32 @@ class PaginationTable extends Component {
         asc ? "asc" : "desc"
       ]);
     }
-    showingItems = this.isSearchable()
-      ? (showingItems = filterByMultiProperties(
-          showingItems,
-          searchBarText,
-          searchKeyProperties
-        ))
-      : showingItems;
-    showingItems = pagination ? this.paginate(showingItems) : showingItems;
-    accordionRowRender;
+    if (typeof searchBarText === "string" && searchBarText.trim().length > 0) {
+      showingItems = this.hasSearchKeys()
+        ? (showingItems = filterByMultiProperties(
+            showingItems,
+            searchBarText,
+            searchKeyProperties,
+            !!customSearchFilterCreator &&
+              customSearchFilterCreator(searchBarText)
+          ))
+        : showingItems;
+    }
 
-    const SearchBar = this.isSearchable() && (
-      <Input
+    showingItems = pagination ? this.paginate(showingItems) : showingItems;
+
+    const SearchBar = this.hasSearchKeys() && (
+      <LazyInput
+        as={Input}
+        onChange={this.onSearchBarTextChange}
         icon="search"
         iconPosition="left"
         // label={"Search"}
         fluid
-        placeholder={`Search ${searchKeyProperties.join(", ")} ...`}
+        placeholder={
+          searchBarPlaceholder || `Search ${searchKeyProperties.join(", ")} ...`
+        }
         value={this.state.searchBarText}
-        onChange={this.onSearchBarTextChange}
       />
     );
 
@@ -249,13 +261,14 @@ class PaginationTable extends Component {
                       </Table.Cell>
                     ))}
                   </Table.Row>
-                  <Table.Row>
-                    <Table.Cell colspan={columnOption.length}>
-                      {accordionRowRender &&
-                        accordionViewExpandedUuids.includes(item.uuid) &&
-                        accordionRowRender(item)}
-                    </Table.Cell>
-                  </Table.Row>
+                  {accordionRowRender &&
+                    accordionViewExpandedUuids.includes(item.uuid) && (
+                      <Table.Row>
+                        <Table.Cell colSpan={columnOption.length}>
+                          {accordionRowRender(item)}
+                        </Table.Cell>
+                      </Table.Row>
+                    )}
                 </React.Fragment>
               ))}
             </Table.Body>
@@ -338,7 +351,9 @@ PaginationTable.propTypes = {
   initSortingFields: PropTypes.arrayOf(PropTypes.string),
   initSortingOrderAsc: PropTypes.bool,
   searchKeyProperties: PropTypes.arrayOf(PropTypes.string),
-  accordionRow: PropTypes.func
+  accordionRow: PropTypes.func,
+  customSearchFilterCreator: PropTypes.func, //customSearchFilterCreator(searchBarText) expected return a typical Array.filter function
+  searchBarPlaceholder: PropTypes.string
 };
 PaginationTable.defaultProps = {
   itemsPerPage: 10,
@@ -409,6 +424,8 @@ export const Usage = () => (
     searchKeyProperties={["id", "name"]}
   />
 );
+
+//Usage2 render props example
 export const Usage2 = () => (
   <PaginationTable
     items={[
@@ -443,7 +460,7 @@ export const Usage2 = () => (
         onItemClick: item => {
           alert(item.name);
         },
-        sortingFields: "name"
+        sortingFields: ["name"]
       }
     ]}
     initSortingFields={["id"]}
@@ -462,6 +479,7 @@ export const Usage2 = () => (
   </PaginationTable>
 );
 
+// Usages3 accordionRowRender example
 export const Usage3 = () => (
   <PaginationTable
     items={[
@@ -516,3 +534,99 @@ export const Usage3 = () => (
     )}
   </PaginationTable>
 );
+
+// Usages4 customSearchFilterCreator & accordionRowRender example
+export const Usage4 = () => {
+  const indexNameMap = {
+    1: "nestedIndex ohoh index 1 name",
+    2: "nestedIndex nono index 2 name",
+    3: "nestedIndex yaya index 3 name"
+  };
+  return (
+    <PaginationTable
+      items={[
+        {
+          id: 1,
+          name: "item name 1",
+          nestedIndexCollections: {
+            c1: [1],
+            c2: [2]
+          }
+        },
+        {
+          id: 2,
+          name: "item name 2",
+          nestedIndexCollections: {
+            c1: [2],
+            c2: [3]
+          }
+        },
+        {
+          id: 3,
+          name: "item name 3",
+          nestedIndexCollections: {
+            c1: [1, 3],
+            c2: [2]
+          }
+        }
+      ]}
+      columnOption={[
+        {
+          header: "idHeader",
+          cellValue: "id",
+          onItemClick: item => {
+            console.log(`PaginationTableUsage3 onItemClick ${item.id}`);
+          },
+          sortingFields: ["id"]
+        },
+        {
+          header: "Name~",
+          cellValue: item =>
+            `*custom text cannot be searched* property can item.name => ${
+              item.name
+            } `,
+          sortingFields: ["name"]
+        }
+      ]}
+      initSortingFields={["id"]}
+      initSortingOrderAsc={false}
+      pagination
+      itemsPerPage={2}
+      searchKeyProperties={["id", "name"]}
+      accordionRowRender={item => (
+        <div style={{ border: "yellow solid 2px " }}>
+          <h3>{"item.nestedIndexCollections.c1"}</h3>
+          <ol>
+            {_.get(item, "nestedIndexCollections.c1", []).map((i, ii) => (
+              <li key={ii}>{indexNameMap[i]}</li>
+            ))}
+          </ol>
+          <h4>{"item.nestedIndexCollections.c2"}</h4>
+          <ol>
+            {_.get(item, "nestedIndexCollections.c2", []).map((i, ii) => (
+              <li key={ii}>{indexNameMap[i]}</li>
+            ))}
+          </ol>
+        </div>
+      )}
+      customSearchFilterCreator={keyword => item => {
+        console.log(`customSearchFilterCreator item`, item);
+        if (keyword) {
+          return _.get(item, "nestedIndexCollections.c1", []).some(index =>
+            new RegExp(_.escapeRegExp(keyword), "ig").test(indexNameMap[index])
+          );
+        }
+        return false;
+      }}
+      searchBarPlaceholder={`Search by collection name, id, name.....`}
+    >
+      {({ SearchBar, TableEle, PaginationBar }) => (
+        <div>
+          {PaginationBar}
+          {SearchBar}
+          {TableEle}
+        </div>
+      )}
+    </PaginationTable>
+  );
+};

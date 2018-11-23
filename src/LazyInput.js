@@ -6,7 +6,7 @@ import { Input } from "semantic-ui-react";
 class LazyInput extends React.Component {
   constructor(props) {
     super(props);
-    const { time = 1000, value } = props;
+    const { time = 200, value } = props;
     this.state = { value: value || "" };
     this.onChange = debounce(this.onChange, time).bind(this);
   }
