@@ -3,8 +3,8 @@ import ReactDOM from "react-dom";
 import { Usage as LoadingSpanUsage } from "./LoadingSpan.js";
 import { Usage as PaginationTableUsage } from "./PaginationTable";
 import { Usage2 as PaginationTableUsage2 } from "./PaginationTable";
-
 import { Usage3 as PaginationTableUsage3 } from "./PaginationTable";
+import { Usage4 as PaginationTableUsage4 } from "./PaginationTable";
 // import LayoutProblem from "./LayoutProblem.js";
 import { Usage as OrderableList } from "./OrderableList";
 
@@ -22,9 +22,15 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      <MyDiv title={"PaginationTableUsage3 ( accordion Row )"}>
+      <MyDiv title={"PaginationTableUsage4 ( customFilter  & accordion Row )"}>
+        <PaginationTableUsage4 />
+      </MyDiv>
+      {/** 
+<MyDiv title={"PaginationTableUsage3 ( accordion Row )"}>
         <PaginationTableUsage3 />
       </MyDiv>
+*/}
+
       <MyDiv title={"PaginationTableUsage2 ( render props )"}>
         <PaginationTableUsage2 />
       </MyDiv>
