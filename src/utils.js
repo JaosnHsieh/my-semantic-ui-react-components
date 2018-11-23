@@ -1,24 +1,37 @@
 import _ from "lodash";
+
 /**
  *
  * @param {array of Object} items
  * @param {string} keword
  * @param {array of string} searchProperties
+ * @param {func} customSearchFilterFunc a typical Array.filter func
  */
 export const filterByMultiProperties = (
   items = [],
   keyword = "",
-  searchProperties = []
+  searchProperties = [],
+  customSearchFilterFunc
 ) => {
   if (searchProperties.length === 0 && items.length > 0 && !!items[0]) {
     searchProperties = Object.keys(items[0]);
   }
   return keyword.length > 0
-    ? _.filter(items, item =>
-        searchProperties.some(key => {
-          return new RegExp(_.escapeRegExp(keyword), "ig").test(item[key]);
-        })
-      )
+    ? _.filter(items, item => {
+        if (customSearchFilterFunc) {
+          if (customSearchFilterFunc(item)) {
+            return true;
+          }
+        }
+        if (
+          searchProperties.some(key => {
+            return new RegExp(_.escapeRegExp(keyword), "ig").test(item[key]);
+          })
+        ) {
+          return true;
+        }
+        return false;
+      })
     : items;
 };
 
@@ -94,6 +107,7 @@ export const moveArrayElement = {
   }
 };
 
+//uuid from https://cythilya.github.io/2017/03/12/uuid/
 export const uuid = () => {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
