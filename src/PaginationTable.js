@@ -11,7 +11,7 @@ import {
 } from "semantic-ui-react";
 import _ from "lodash";
 import styles from "./PaginationTable.css";
-import { filterByMultiProperties } from "./utils";
+import { filterByMultiProperties, uuid } from "./utils";
 
 const SortingIcon = ({ asc = false }) =>
   asc ? <Icon name={"caret down"} /> : <Icon name={"caret up"} />;
@@ -25,8 +25,12 @@ class PaginationTable extends Component {
         currentSortingFields: this.props.initSortingFields,
         asc: this.props.initSortingOrderAsc
       },
-      searchBarText: ""
+      searchBarText: "",
+      accordionViewExpandedUuids: []
     };
+    if (!!this.props.accordionRowRender && props.items) {
+      props.items.forEach(i => (i.uuid = uuid()));
+    }
   }
   componentWillReceiveProps(nextProps) {
     if (
@@ -36,6 +40,12 @@ class PaginationTable extends Component {
       this.setState({
         currentPage: nextProps.currentPage
       });
+    }
+
+    if (!!this.props.accordionRowRender) {
+      if (nextProps.items !== this.props.items) {
+        nextProps.items.forEach(i => (i.uuid = uuid()));
+      }
     }
   }
   // componentDidUpdate() {
@@ -114,11 +124,12 @@ class PaginationTable extends Component {
       isImmutable,
       initSortingFields,
       initSortingOrderAsc,
+      accordionRowRender,
       items,
       ...props
     } = this.props;
     let showingItems = items;
-    const { searchBarText } = this.state;
+    const { searchBarText, accordionViewExpandedUuids } = this.state;
     const { currentSortingFields, asc } = this.state.sorting;
 
     if (currentSortingFields) {
@@ -134,6 +145,7 @@ class PaginationTable extends Component {
         ))
       : showingItems;
     showingItems = pagination ? this.paginate(showingItems) : showingItems;
+    accordionRowRender;
 
     const SearchBar = this.isSearchable() && (
       <Input
@@ -182,30 +194,69 @@ class PaginationTable extends Component {
           {showingItems.length > 0 && (
             <Table.Body>
               {showingItems.map((item, i) => (
-                <Table.Row
-                  // styleName={item.isTargetItem ? "background-fadeout" : ""}
-                  // id={`project_${item._id}`}
-                  // positive={!!item.isTargetItem}
-                  key={i}
-                >
-                  {columnOption.map((c, ii) => (
-                    <Table.Cell
-                      key={ii}
-                      style={{ cursor: c.onItemClick ? "pointer" : "auto" }}
-                      onClick={() => {
-                        if (c.onItemClick) {
-                          c.onItemClick(item);
-                        }
-                      }}
-                    >
-                      {typeof c.cellValue === "string"
-                        ? isImmutable
-                          ? item.get(c.cellValue)
-                          : item[c.cellValue]
-                        : c.cellValue(item)}
+                <React.Fragment key={i}>
+                  <Table.Row
+                    // styleName={item.isTargetItem ? "background-fadeout" : ""}
+                    // id={`project_${item._id}`}
+                    // positive={!!item.isTargetItem}
+                    // key={i}
+                    active={
+                      accordionRowRender &&
+                      accordionViewExpandedUuids.includes(item.uuid)
+                    }
+                  >
+                    {columnOption.map((c, ii) => (
+                      <Table.Cell
+                        key={ii}
+                        style={{ cursor: c.onItemClick ? "pointer" : "auto" }}
+                        onClick={() => {
+                          if (c.onItemClick) {
+                            c.onItemClick(item);
+                          }
+                          if (accordionRowRender) {
+                            if (
+                              accordionViewExpandedUuids.includes(item.uuid)
+                            ) {
+                              this.setState({
+                                accordionViewExpandedUuids: accordionViewExpandedUuids.filter(
+                                  id => id !== item.uuid
+                                )
+                              });
+                            } else {
+                              this.setState({
+                                accordionViewExpandedUuids: [
+                                  ...accordionViewExpandedUuids,
+                                  item.uuid
+                                ]
+                              });
+                            }
+                          }
+                        }}
+                      >
+                        {ii === 0 && accordionRowRender ? (
+                          accordionViewExpandedUuids.includes(item.uuid) ? (
+                            <Icon name={"caret down"} />
+                          ) : (
+                            <Icon name={"caret right"} />
+                          )
+                        ) : null}
+
+                        {typeof c.cellValue === "string"
+                          ? isImmutable
+                            ? item.get(c.cellValue)
+                            : item[c.cellValue]
+                          : c.cellValue(item)}
+                      </Table.Cell>
+                    ))}
+                  </Table.Row>
+                  <Table.Row>
+                    <Table.Cell colspan={columnOption.length}>
+                      {accordionRowRender &&
+                        accordionViewExpandedUuids.includes(item.uuid) &&
+                        accordionRowRender(item)}
                     </Table.Cell>
-                  ))}
-                </Table.Row>
+                  </Table.Row>
+                </React.Fragment>
               ))}
             </Table.Body>
           )}
@@ -286,7 +337,8 @@ PaginationTable.propTypes = {
   currentPage: PropTypes.number,
   initSortingFields: PropTypes.arrayOf(PropTypes.string),
   initSortingOrderAsc: PropTypes.bool,
-  searchKeyProperties: PropTypes.arrayOf(PropTypes.string)
+  searchKeyProperties: PropTypes.arrayOf(PropTypes.string),
+  accordionRow: PropTypes.func
 };
 PaginationTable.defaultProps = {
   itemsPerPage: 10,
@@ -329,7 +381,7 @@ export const Usage = () => (
         header: "idHeader",
         cellValue: "id",
         onItemClick: item => {
-          alert(item.id);
+          console.log(`onClick qq ${item.id} `);
         },
         sortingFields: ["id"]
       },
@@ -357,7 +409,6 @@ export const Usage = () => (
     searchKeyProperties={["id", "name"]}
   />
 );
-
 export const Usage2 = () => (
   <PaginationTable
     items={[
@@ -400,6 +451,61 @@ export const Usage2 = () => (
     pagination
     itemsPerPage={2}
     searchKeyProperties={["id", "name"]}
+  >
+    {({ SearchBar, TableEle, PaginationBar }) => (
+      <div>
+        {PaginationBar}
+        {SearchBar}
+        {TableEle}
+      </div>
+    )}
+  </PaginationTable>
+);
+
+export const Usage3 = () => (
+  <PaginationTable
+    items={[
+      {
+        id: 1,
+        name: "item name 1"
+      },
+      {
+        id: 2,
+        name: "item name 2"
+      },
+      {
+        id: 3,
+        name: "item name 3"
+      }
+    ]}
+    columnOption={[
+      {
+        header: "idHeader",
+        cellValue: "id",
+        onItemClick: item => {
+          console.log(`PaginationTableUsage3 onItemClick ${item.id}`);
+        },
+        sortingFields: ["id"]
+      },
+      {
+        header: "Name~",
+        cellValue: item =>
+          `*custom text cannot be searched* property can item.name => ${
+            item.name
+          } `,
+        sortingFields: ["name"]
+      }
+    ]}
+    initSortingFields={["id"]}
+    initSortingOrderAsc={false}
+    pagination
+    itemsPerPage={2}
+    searchKeyProperties={["id", "name"]}
+    accordionRowRender={item => (
+      <div style={{ border: "red solid 2px " }}>
+        item id : {item.id} render anything over here
+      </div>
+    )}
   >
     {({ SearchBar, TableEle, PaginationBar }) => (
       <div>
