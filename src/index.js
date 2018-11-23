@@ -1,78 +1,61 @@
 import React from "react";
-import { render } from "react-dom";
-import { makeData, Logo, Tips } from "./Utils";
-import { Table } from "semantic-ui-react";
+import ReactDOM from "react-dom";
+import { Usage as LoadingSpanUsage } from "./LoadingSpan.js";
+import { Usage as PaginationTableUsage } from "./PaginationTable";
+import { Usage2 as PaginationTableUsage2 } from "./PaginationTable";
+import { Usage3 as PaginationTableUsage3 } from "./PaginationTable";
+import { Usage4 as PaginationTableUsage4 } from "./PaginationTable";
+// import LayoutProblem from "./LayoutProblem.js";
+import { Usage as OrderableList } from "./OrderableList";
 
-// Import React Table
-import ReactTable from "react-table";
-import "react-table/react-table.css";
+import { Usage as EditableText } from "./EditableText.js";
 
-class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      data: makeData()
-    };
-  }
-  render() {
-    const { data } = this.state;
-    return (
-      <div>
-        <ReactTable
-          TableComponent={props => <Table {...props} />}
-          TrComponent={props => <Table.Row {...props} />}
-          TdComponent={props => <Table.Cell {...props} />}
-          TbodyComponent={props => <Table.Body {...props} />}
-          TheadComponent={props => <Table.Header {...props} />}
-          ThComponent={props => <Table.HeaderCell {...props} />}
-          data={data}
-          columns={[
-            {
-              Header: "Name",
-              columns: [
-                {
-                  Header: "First Name",
-                  accessor: "firstName"
-                },
-                {
-                  Header: "Last Name",
-                  id: "lastName",
-                  accessor: d => d.lastName
-                }
-              ]
-            },
-            {
-              Header: "Info",
-              columns: [
-                {
-                  Header: "Age",
-                  accessor: "age"
-                },
-                {
-                  Header: "Status",
-                  accessor: "status"
-                }
-              ]
-            },
-            {
-              Header: "Stats",
-              columns: [
-                {
-                  Header: "Visits",
-                  accessor: "visits"
-                }
-              ]
-            }
-          ]}
-          defaultPageSize={10}
-          className="-striped -highlight"
-        />
-        <br />
-        <Tips />
-        <Logo />
-      </div>
-    );
-  }
+import { Usage2 as EditableText2 } from "./EditableText.js";
+
+const MyDiv = ({ children, title }) => (
+  <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
+    {title && <h2>{title}</h2>}
+    {children}
+  </div>
+);
+
+function App() {
+  return (
+    <div className="App">
+      <MyDiv title={"PaginationTableUsage4 ( customFilter  & accordion Row )"}>
+        <PaginationTableUsage4 />
+      </MyDiv>
+      {/** 
+<MyDiv title={"PaginationTableUsage3 ( accordion Row )"}>
+        <PaginationTableUsage3 />
+      </MyDiv>
+*/}
+
+      <MyDiv title={"PaginationTableUsage2 ( render props )"}>
+        <PaginationTableUsage2 />
+      </MyDiv>
+      {/**
+      <MyDiv title={"PaginationTableUsage"}>
+        <PaginationTableUsage />
+      </MyDiv>
+
+ */}
+
+      <MyDiv title={"EditableText"}>
+        <EditableText />
+        <EditableText2 />
+      </MyDiv>
+
+      {/** <LayoutProblem /> */}
+
+      {/**
+      <MyDiv title={"LoadingSpan Usage"}>
+        <LoadingSpanUsage />
+      </MyDiv>
+       */}
+    </div>
+  );
 }
 
-render(<App />, document.getElementById("root"));
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
