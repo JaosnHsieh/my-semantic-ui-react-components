@@ -42,8 +42,7 @@ class EditableTextContainer extends Component {
       onSubmit,
       size = "small",
       textStyle = {},
-      placeholderText = "empty.....",
-      hasEditIcon = false
+      placeholderText = "empty....."
     } = this.props;
     const { isEditing } = this.state;
     return (
@@ -104,17 +103,15 @@ class EditableTextContainer extends Component {
             }}
           >
             {text ? text : placeholderText}
-            {hasEditIcon && (
-              <Icon
-                onClick={() => {
-                  this.setIsEditing(true);
-                }}
-                name="edit"
-                color="grey"
-                style={styles.editIcon}
-                size={"small"}
-              />
-            )}
+            <Icon
+              onClick={() => {
+                this.setIsEditing(true);
+              }}
+              name="edit"
+              color="grey"
+              style={styles.editIcon}
+              size={"small"}
+            />
           </span>
         )}
       </div>
@@ -127,8 +124,7 @@ EditableTextContainer.propTypes = {
   onSubmit: PropTypes.func.isRequired, // if return promise will wait for that
   size: PropTypes.string, // semantic Input, Button props
   textStyle: PropTypes.object,
-  placeholderText: PropTypes.string,
-  hasEditIcon: PropTypes.bool
+  placeholderText: PropTypes.string
 };
 
 // asnyc
@@ -172,7 +168,6 @@ export class Usage2 extends React.Component {
         }}
         textStyle={{ color: "grey", fontSize: "10px" }}
         size={"mini"}
-        hasEditIcon
       />
     );
   }
