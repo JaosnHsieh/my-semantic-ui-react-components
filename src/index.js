@@ -12,6 +12,7 @@ import { Usage as EditableText } from "./EditableText.js";
 
 import { Usage2 as EditableText2 } from "./EditableText.js";
 
+import { Usage as VerticalMenu } from "./VerticalMenu.js";
 const MyDiv = ({ children, title }) => (
   <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
     {title && <h2>{title}</h2>}
@@ -22,6 +23,12 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
+      {/**
+      <MyDiv title={`VerticalMenu`}>
+        <VerticalMenu />
+      </MyDiv>
+       */}
+
       {/** 
       <MyDiv title={"PaginationTableUsage4 ( customFilter  & accordion Row )"}>
         <PaginationTableUsage4 />
@@ -39,11 +46,13 @@ function App() {
         <PaginationTableUsage2 />
       </MyDiv>
 
+      
+
+ */}
+
       <MyDiv title={"PaginationTableUsage"}>
         <PaginationTableUsage />
       </MyDiv>
-
- */}
 
       <MyDiv title={"EditableText"}>
         <EditableText />

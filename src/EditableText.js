@@ -43,12 +43,13 @@ class EditableTextContainer extends Component {
       size = "small",
       textStyle = {},
       placeholderText = "empty.....",
-      hasEditIcon = false
+      hasEditIcon = false,
+      isEditable = true
     } = this.props;
     const { isEditing } = this.state;
     return (
       <div>
-        {isEditing ? (
+        {isEditing && isEditable ? (
           <span>
             <form
               onSubmit={e => {
@@ -98,7 +99,7 @@ class EditableTextContainer extends Component {
           </span>
         ) : (
           <span
-            style={{ cursor: "pointer", ...textStyle }}
+            style={{ cursor: isEditable ? "pointer" : null, ...textStyle }}
             onClick={() => {
               this.setIsEditing(true);
             }}
@@ -128,7 +129,8 @@ EditableTextContainer.propTypes = {
   size: PropTypes.string, // semantic Input, Button props
   textStyle: PropTypes.object,
   placeholderText: PropTypes.string,
-  hasEditIcon: PropTypes.bool
+  hasEditIcon: PropTypes.bool,
+  isEditable: PropTypes.bool
 };
 
 // asnyc
