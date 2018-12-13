@@ -13,6 +13,9 @@ import { Usage as EditableText } from "./EditableText.js";
 import { Usage2 as EditableText2 } from "./EditableText.js";
 
 import { Usage as VerticalMenu } from "./VerticalMenu.js";
+
+import { Usage as ReactGridTest } from "./ReactGridTest.js";
+
 const MyDiv = ({ children, title }) => (
   <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
     {title && <h2>{title}</h2>}
@@ -23,49 +26,12 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      {/**
-      <MyDiv title={`VerticalMenu`}>
-        <VerticalMenu />
+      <MyDiv title={"Orderable List"}>
+        <OrderableList />
       </MyDiv>
-       */}
-
-      {/** 
-      <MyDiv title={"PaginationTableUsage4 ( customFilter  & accordion Row )"}>
-        <PaginationTableUsage4 />
+      <MyDiv title={"react grid test"}>
+        <ReactGridTest />
       </MyDiv>
-      */}
-      {/** 
-<MyDiv title={"PaginationTableUsage3 ( accordion Row )"}>
-        <PaginationTableUsage3 />
-      </MyDiv>
-*/}
-
-      {/**
-
-      <MyDiv title={"PaginationTableUsage2 ( render props )"}>
-        <PaginationTableUsage2 />
-      </MyDiv>
-
-      
-
- */}
-
-      <MyDiv title={"PaginationTableUsage"}>
-        <PaginationTableUsage />
-      </MyDiv>
-
-      <MyDiv title={"EditableText"}>
-        <EditableText />
-        <EditableText2 />
-      </MyDiv>
-
-      {/** <LayoutProblem /> */}
-
-      {/**
-      <MyDiv title={"LoadingSpan Usage"}>
-        <LoadingSpanUsage />
-      </MyDiv>
-       */}
     </div>
   );
 }

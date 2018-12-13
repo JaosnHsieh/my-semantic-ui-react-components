@@ -132,10 +132,10 @@ export const Usage = class Usage extends Component {
             <span>Total got {`${this.state.rightItems.length}`}</span>
           ),
           renderItem: (item, index) => (
-            <div>
+            <span>
               <span>{`No. ${index + 1}`}</span>
               {`@_@ ${item.id} ${item.name} @_@`}
-            </div>
+            </span>
           )
         }}
       />

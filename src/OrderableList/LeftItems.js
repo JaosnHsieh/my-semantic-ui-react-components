@@ -40,6 +40,25 @@ class LeftItems extends Component {
 
     const totalHeight = this.props.totalHeight || defaultTotalHeight;
 
+    const listItems = searchedItems.map((item, i) => (
+      <List.Item key={i} style={{ cursor: "default" }}>
+        <List.Content floated="left" style={{ cursor: "pointer" }}>
+          <List.Header>
+            <Icon
+              name="plus"
+              onClick={() => {
+                this.onClickPlusIcon(item, i);
+              }}
+              style={{ cursor: "pointer" }}
+              circular
+            />
+            {itemValuePropertyName && item[itemValuePropertyName]}
+            {renderItem && renderItem(item)}
+          </List.Header>
+        </List.Content>
+      </List.Item>
+    ));
+
     return (
       <div style={{ flex: 1 }}>
         <Segment attached textAlign="left" style={{ borderRight: 0 }}>
@@ -71,28 +90,7 @@ class LeftItems extends Component {
                 {"No Matched Category to display"}
               </Message>
             )}
-            {searchedItems.map((item, i) => (
-              <List.Item key={i} style={{ cursor: "default" }}>
-                <List.Content
-                  floated="right"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    this.onClickPlusIcon(item, i);
-                  }}
-                >
-                  <List.Header>
-                    <Icon name="plus" circular />
-                  </List.Header>
-                </List.Content>
-                <Icon name="list" />
-                <List.Content>
-                  <List.Header>
-                    {itemValuePropertyName && item[itemValuePropertyName]}
-                    {renderItem && renderItem(item)}
-                  </List.Header>
-                </List.Content>
-              </List.Item>
-            ))}
+            {listItems}
           </List>
         </Segment>
       </div>

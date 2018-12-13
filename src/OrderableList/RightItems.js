@@ -156,6 +156,32 @@ class RightItems extends Component {
         />
       </Button.Group>
     );
+
+    const listItems = searchedItems.map((item, i) => (
+      <List.Item
+        key={i}
+        active={this.state.activeSelectedItemIndex === i}
+        onClick={() => {
+          this.onItemSelect(item, i);
+        }}
+      >
+        <List.Content floated="left">
+          <List.Header>
+            <Icon
+              name="minus"
+              circular
+              style={{ cursor: "pointer" }}
+              onClick={e => {
+                e.stopPropagation(); // for prevent event bubbling
+                this.onItemRemove(item, i);
+              }}
+            />
+            {itemValuePropertyName && item[itemValuePropertyName]}
+            {renderItem && renderItem(item, i)}
+          </List.Header>
+        </List.Content>
+      </List.Item>
+    ));
     return (
       <div style={{ flex: 1 }}>
         <Segment attached textAlign="right" style={{ borderLeft: 0 }}>
@@ -209,35 +235,7 @@ class RightItems extends Component {
                 {"No Matched Item to display"}
               </Message>
             )}
-            {searchedItems.map((item, i) => (
-              <List.Item
-                key={i}
-                active={this.state.activeSelectedItemIndex === i}
-                onClick={() => {
-                  this.onItemSelect(item, i);
-                }}
-              >
-                <List.Content
-                  floated="right"
-                  style={{ cursor: "pointer" }}
-                  onClick={e => {
-                    e.stopPropagation(); // for prevent event bubbling
-                    this.onItemRemove(item, i);
-                  }}
-                >
-                  <List.Header>
-                    <Icon name="minus" circular />
-                  </List.Header>
-                </List.Content>
-                <Icon name="list" />
-                <List.Content>
-                  <List.Header>
-                    {itemValuePropertyName && item[itemValuePropertyName]}
-                    {renderItem && renderItem(item, i)}
-                  </List.Header>
-                </List.Content>
-              </List.Item>
-            ))}
+            {listItems}
           </List>
         </Segment>
       </div>
