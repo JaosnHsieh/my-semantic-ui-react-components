@@ -10,6 +10,10 @@ import {
   Popup
 } from "semantic-ui-react";
 import _ from "lodash";
+import ReactGridLayout from "react-grid-layout";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+
 import LazyInput from "../LazyInput";
 import { defaultTotalHeight, defaultRightToolBarHeight } from "./constants";
 
@@ -20,6 +24,7 @@ class RightItems extends Component {
     searchKeyword: "",
     activeSelectedItemIndex: null
   };
+
   onInputChange = value => {
     this.setState({ searchKeyword: value });
   };
@@ -99,8 +104,10 @@ class RightItems extends Component {
       renderItem,
       onItemsChanged,
       renderSelectedToolBar,
-      searchProperties
+      searchProperties,
+      dragAndDropOptions: { isDragAndDropOn, saveGridLayout }
     } = this.props;
+    console.log(`isDragAndDropOn`, isDragAndDropOn);
     const { searchKeyword } = this.state;
     const searchedItems = filterByMultiProperties(
       items,
@@ -156,6 +163,69 @@ class RightItems extends Component {
         />
       </Button.Group>
     );
+
+    const listItems = searchedItems.map((item, i) => (
+      <List.Item
+        key={i}
+        active={this.state.activeSelectedItemIndex === i}
+        onClick={() => {
+          this.onItemSelect(item, i);
+        }}
+        style={
+          isDragAndDropOn
+            ? {
+                cursor: "pointer",
+                borderBottom: "1px solid rgba(34,36,38,.15)",
+                background:
+                  this.state.activeSelectedItemIndex === i
+                    ? "rgba(0,0,0,.05)"
+                    : "unset"
+              }
+            : {}
+        } // semantic item style
+      >
+        <List.Content floated="left">
+          <List.Header>
+            <Icon
+              name="minus"
+              circular
+              style={{ cursor: "pointer" }}
+              onClick={e => {
+                e.stopPropagation(); // for prevent event bubbling
+                this.onItemRemove(item, i);
+              }}
+            />
+            {itemValuePropertyName && item[itemValuePropertyName]}
+            {renderItem && renderItem(item, i)}
+          </List.Header>
+        </List.Content>
+      </List.Item>
+    ));
+
+    const gridLayout = (
+      <ReactGridLayout
+        layout={this.props.items.map((item, index) => ({
+          x: 0,
+          y: index,
+          w: 1,
+          h: 1
+        }))}
+        cols={1}
+        rowHeight={32}
+        width={1000}
+        autoSize
+        verticalCompact
+        compactType={"horizontal"}
+        isResizable={false}
+        preventCollision={false}
+        onLayoutChange={layout => {
+          saveGridLayout(layout);
+        }}
+      >
+        {listItems}
+      </ReactGridLayout>
+    );
+
     return (
       <div style={{ flex: 1 }}>
         <Segment attached textAlign="right" style={{ borderLeft: 0 }}>
@@ -209,35 +279,7 @@ class RightItems extends Component {
                 {"No Matched Item to display"}
               </Message>
             )}
-            {searchedItems.map((item, i) => (
-              <List.Item
-                key={i}
-                active={this.state.activeSelectedItemIndex === i}
-                onClick={() => {
-                  this.onItemSelect(item, i);
-                }}
-              >
-                <List.Content
-                  floated="right"
-                  style={{ cursor: "pointer" }}
-                  onClick={e => {
-                    e.stopPropagation(); // for prevent event bubbling
-                    this.onItemRemove(item, i);
-                  }}
-                >
-                  <List.Header>
-                    <Icon name="minus" circular />
-                  </List.Header>
-                </List.Content>
-                <Icon name="list" />
-                <List.Content>
-                  <List.Header>
-                    {itemValuePropertyName && item[itemValuePropertyName]}
-                    {renderItem && renderItem(item, i)}
-                  </List.Header>
-                </List.Content>
-              </List.Item>
-            ))}
+            {isDragAndDropOn ? gridLayout : listItems}
           </List>
         </Segment>
       </div>
@@ -254,13 +296,21 @@ RightItems.propTypes = {
   itemValuePropertyName: PropTypes.string,
   onItemsChanged: PropTypes.func.isRequired,
   onItemRemoved: PropTypes.func,
-  renderSelectedToolBar: PropTypes.func
+  renderSelectedToolBar: PropTypes.func,
+  dragAndDropOptions: PropTypes.shape({
+    isDragAndDropOn: PropTypes.bool.isRequired,
+    saveGridLayout: PropTypes.func.isRequired // save layout array
+  })
 };
 RightItems.defaultProps = {
   items: [],
   searchInputPlaceHolder: "Search...",
   // itemValuePropertyName: '',
-  searchProperties: []
+  searchProperties: [],
+  dragAndDropOptions: {
+    isDragAndDropOn: false,
+    saveGridLayout: () => {}
+  }
 };
 
 export default RightItems;

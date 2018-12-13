@@ -191,6 +191,7 @@ class PaginationTable extends Component {
                     }
                   }}
                   key={i}
+                  {..._.get(c, "headerCellProps", {})}
                 >
                   {c.header || ""}
                   {!isImmutable &&
@@ -225,7 +226,7 @@ class PaginationTable extends Component {
                           if (c.onItemClick) {
                             c.onItemClick(item);
                           }
-                          if (accordionRowRender) {
+                          if (accordionRowRender && ii === 0) {
                             if (
                               accordionViewExpandedUuids.includes(item.uuid)
                             ) {
@@ -292,36 +293,38 @@ class PaginationTable extends Component {
     const PaginationBar =
       pagination &&
       (showingItems.length > 0 ? (
-        <Menu pagination>
-          <Menu.Item
-            as="a"
-            icon
-            onClick={this.prevPage}
-            disabled={!this.hasPrevPage()}
-          >
-            <Icon name="chevron left" />
-          </Menu.Item>
-          {this.pageNumArray().map((num, i) => (
+        <div style={{ display: "flex" }}>
+          <Menu pagination style={{ margin: "0 auto" }}>
             <Menu.Item
               as="a"
-              key={i}
-              onClick={() => {
-                this.selectPage(num);
-              }}
-              active={num === this.state.currentPage}
+              icon
+              onClick={this.prevPage}
+              disabled={!this.hasPrevPage()}
             >
-              {num}
+              <Icon name="chevron left" />
             </Menu.Item>
-          ))}
-          <Menu.Item
-            as="a"
-            icon
-            onClick={this.nextPage}
-            disabled={!this.hasNextPage()}
-          >
-            <Icon name="chevron right" />
-          </Menu.Item>
-        </Menu>
+            {this.pageNumArray().map((num, i) => (
+              <Menu.Item
+                as="a"
+                key={i}
+                onClick={() => {
+                  this.selectPage(num);
+                }}
+                active={num === this.state.currentPage}
+              >
+                {num}
+              </Menu.Item>
+            ))}
+            <Menu.Item
+              as="a"
+              icon
+              onClick={this.nextPage}
+              disabled={!this.hasNextPage()}
+            >
+              <Icon name="chevron right" />
+            </Menu.Item>
+          </Menu>
+        </div>
       ) : null);
     return typeof this.props.children === "function" ? (
       this.props.children({ SearchBar, TableEle, PaginationBar })
@@ -340,7 +343,8 @@ PaginationTable.propTypes = {
       header: PropTypes.string,
       cellValue: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
       onItemClick: PropTypes.func,
-      sortingFields: PropTypes.arrayOf(PropTypes.string)
+      sortingFields: PropTypes.arrayOf(PropTypes.string),
+      headerCellProps: PropTypes.object
     })
   ),
   items: PropTypes.any,
@@ -577,7 +581,10 @@ export const Usage4 = () => {
           onItemClick: item => {
             console.log(`PaginationTableUsage3 onItemClick ${item.id}`);
           },
-          sortingFields: ["id"]
+          sortingFields: ["id"],
+          headerCellProps: {
+            width: 5
+          }
         },
         {
           header: "Name~",
