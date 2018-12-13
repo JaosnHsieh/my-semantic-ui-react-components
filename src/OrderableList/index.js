@@ -5,6 +5,14 @@ import RightItems from "./RightItems";
 import { defaultTotalHeight, defaultRightToolBarHeight } from "./constants";
 
 class OrderableList extends Component {
+  static gridLayoutToCorrectItems = (layoutItems = [], oldItems = []) => {
+    const newItems = [];
+    for (let i = 0; i < oldItems.length; ++i) {
+      const { y: newIndex } = layoutItems[i];
+      newItems[newIndex] = oldItems[i];
+    }
+    return newItems;
+  };
   onLeftItemsChanged = items => {
     this.props.onLeftItemsChanged(items);
   };
@@ -52,6 +60,7 @@ class OrderableList extends Component {
           totalHeight={this.props.totalHeight || defaultTotalHeight}
           onItemsChanged={this.onRightItemsChanged}
           onItemRemoved={this.onRightItemRemoved}
+          dragAndDropOptions={this.props.dragAndDropOptions}
         />
       </div>
     );
@@ -67,15 +76,24 @@ OrderableList.propTypes = {
   rightItemsProps: PropTypes.object, // refer to RightItems props defs,
   totalHeight: PropTypes.number,
   rightToolBarHeight: PropTypes.number,
-  renderSelectedToolBar: PropTypes.func // renderSelectedToolBar={({moveButtonGroup, activeItem, activeItemIndex})=>(<div></div>)}
+  renderSelectedToolBar: PropTypes.func, // renderSelectedToolBar={({moveButtonGroup, activeItem, activeItemIndex})=>(<div></div>)}
+  dragAndDropOptions: PropTypes.shape({
+    isDragAndDropOn: PropTypes.bool.isRequired,
+    saveGridLayout: PropTypes.func.isRequired // save layout array
+  })
 };
 
 OrderableList.defaultPropTypes = {
   leftItemsProps: {},
-  rightItemsProps: {}
+  rightItemsProps: {},
+  dragAndDropOptions: {
+    isDragAndDropOn: false,
+    saveGridLayout: () => {}
+  }
 };
 
 export default OrderableList;
+// Usage: Drag and drop
 
 export const Usage = class Usage extends Component {
   state = {
@@ -84,11 +102,111 @@ export const Usage = class Usage extends Component {
       { id: 2, name: "name2" },
       { id: 3, name: "name3" }
     ],
-    rightItems: [{ id: 5, name: "name5" }, { id: 6, name: "name6" }]
+    rightItems: [
+      { id: 5, name: "name5" },
+      { id: 6, name: "name6" },
+      { id: 7, name: "name7" },
+      { id: 8, name: "name8" },
+      { id: 9, name: "name9" }
+    ],
+    gridLayout: [] // if dragAndDropOptions.isDragAndDropOn is true, this is a must for saving items
+  };
+  saveRightItems = () => {
+    console.log(
+      OrderableList.gridLayoutToCorrectItems(
+        this.state.gridLayout,
+        this.state.rightItems
+      )
+    );
+  };
+  render() {
+    return (
+      <React.Fragment>
+        <button onClick={this.saveRightItems}>Save right items</button>
+        <OrderableList
+          dragAndDropOptions={{
+            isDragAndDropOn: true,
+            saveGridLayout: layout => {
+              this.setState({ gridLayout: layout });
+            }
+          }}
+          totalHeight={500}
+          rightToolBarHeight={100}
+          leftItems={this.state.leftItems}
+          onLeftItemsChanged={items => {
+            this.setState({ leftItems: items }, () => {
+              console.log("on left items changed items", items);
+            });
+          }}
+          leftItemsProps={{
+            title: "left title",
+            itemValuePropertyName: "name"
+          }}
+          rightItems={this.state.rightItems}
+          onRightItemsChanged={items => {
+            this.setState({ rightItems: items }, () => {
+              console.log("on right items changed items", items);
+            });
+          }}
+          renderSelectedToolBar={({
+            moveButtonGroup,
+            activeItem,
+            activeItemIndex
+          }) => (
+            <div style={{ padding: "10px" }}>
+              <h2>{activeItem.name}</h2>
+              <button
+                onClick={() => {
+                  this.setState(prevState => ({
+                    rightItems: [
+                      ...prevState.rightItems.slice(0, activeItemIndex),
+                      { ...activeItem, name: Math.random() },
+                      ...prevState.rightItems.slice(activeItemIndex + 1)
+                    ]
+                  }));
+                }}
+              >
+                Change name
+              </button>
+              {/* {moveButtonGroup} */}
+            </div>
+          )}
+          rightItemsProps={{
+            renderTitle: () => (
+              <span>Total got {`${this.state.rightItems.length}`}</span>
+            ),
+            renderItem: (item, index) => (
+              <span>
+                {/* <span>{`No. ${index + 1}`}</span> */}
+                {`id: ${item.id} name: ${item.name}`}
+              </span>
+            )
+          }}
+        />
+      </React.Fragment>
+    );
+  }
+};
+// Usage2:  without drag and drop
+export const Usage2 = class Usage extends Component {
+  state = {
+    leftItems: [
+      { id: 1, name: "name1" },
+      { id: 2, name: "name2" },
+      { id: 3, name: "name3" }
+    ],
+    rightItems: [{ id: 5, name: "name5" }, { id: 6, name: "name6" }],
+    layout: [] // if turn on drag and drop, state.layout is a must.
   };
   render() {
     return (
       <OrderableList
+        dragAndDropOptions={{
+          isDragAndDropOn: true,
+          saveGridLayout: layout => {
+            this.setState({ layout });
+          }
+        }}
         totalHeight={500}
         rightToolBarHeight={200}
         leftItems={this.state.leftItems}
