@@ -28,7 +28,12 @@ class OrderableList extends Component {
     if (r && this.props.rightItems.length + 1 > r) {
       this.showRightLimitErrorInterval();
     } else {
-      this.props.onRightItemsChanged(this.props.rightItems.concat(item));
+      const layoutedRightItems = OrderableList.gridLayoutToCorrectItems(
+        this.props.dragAndDropOptions.gridLayout,
+        this.props.rightItems
+      );
+      const updatedRightItems = layoutedRightItems.concat(item);
+      this.props.onRightItemsChanged(updatedRightItems);
     }
   };
   onRightItemsChanged = items => {
@@ -101,7 +106,8 @@ OrderableList.propTypes = {
   renderSelectedToolBar: PropTypes.func, // renderSelectedToolBar={({moveButtonGroup, activeItem, activeItemIndex})=>(<div></div>)}
   dragAndDropOptions: PropTypes.shape({
     isDragAndDropOn: PropTypes.bool.isRequired,
-    saveGridLayout: PropTypes.func.isRequired // save layout array
+    saveGridLayout: PropTypes.func.isRequired,
+    gridLayout: PropTypes.array.isRequired // save layout array
   })
 };
 
@@ -110,7 +116,8 @@ OrderableList.defaultPropTypes = {
   rightItemsProps: {},
   dragAndDropOptions: {
     isDragAndDropOn: false,
-    saveGridLayout: () => {}
+    saveGridLayout: () => {},
+    gridLayout: []
   }
 };
 
@@ -150,7 +157,8 @@ export const Usage = class Usage extends Component {
             isDragAndDropOn: true,
             saveGridLayout: layout => {
               this.setState({ gridLayout: layout });
-            }
+            },
+            gridLayout: this.state.gridLayout
           }}
           totalHeight={500}
           rightToolBarHeight={100}

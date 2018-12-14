@@ -24,7 +24,14 @@ class RightItems extends Component {
     searchKeyword: "",
     activeSelectedItemIndex: null
   };
-
+  componentWillReceiveProps = nextProps => {
+    // cancel active, for fixing activeSelectedItemIndex bug
+    if (this.props.dragAndDropOptions.isDragAndDropOn) {
+      if (this.props.items.length !== nextProps.items.length) {
+        this.setState({ activeSelectedItemIndex: null });
+      }
+    }
+  };
   onInputChange = value => {
     this.setState({ searchKeyword: value });
   };
@@ -163,7 +170,6 @@ class RightItems extends Component {
         />
       </Button.Group>
     );
-
     const listItems = searchedItems.map((item, i) => (
       <List.Item
         key={i}
