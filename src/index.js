@@ -16,6 +16,8 @@ import { Usage as VerticalMenu } from "./VerticalMenu.js";
 
 import { Usage as ReactGridTest } from "./ReactGridTest.js";
 
+import { Usage as BlurOverlay } from "./BlurOverlay.js";
+
 const MyDiv = ({ children, title }) => (
   <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
     {title && <h2>{title}</h2>}
@@ -26,12 +28,17 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
+      <MyDiv title={"BlurOverlay"}>
+        <BlurOverlay />
+      </MyDiv>
+      {/**
       <MyDiv title={"Orderable List"}>
         <OrderableList />
       </MyDiv>
       <MyDiv title={"react grid test"}>
         <ReactGridTest />
       </MyDiv>
+       */}
     </div>
   );
 }
