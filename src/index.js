@@ -18,6 +18,8 @@ import { Usage as ReactGridTest } from "./ReactGridTest.js";
 
 import { Usage as BlurOverlay } from "./BlurOverlay.js";
 
+import { Usage as RenderModal } from "./RenderModalBoilerplate/index.js";
+
 const MyDiv = ({ children, title }) => (
   <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
     {title && <h2>{title}</h2>}
@@ -28,9 +30,15 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      <MyDiv title={"BlurOverlay"}>
+      <MyDiv title={"Render Modal"}>
+        <RenderModal />
+      </MyDiv>
+      {/**
+         * <MyDiv title={"BlurOverlay"}>
         <BlurOverlay />
       </MyDiv>
+         */}
+
       {/**
       <MyDiv title={"Orderable List"}>
         <OrderableList />
