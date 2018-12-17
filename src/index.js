@@ -19,7 +19,8 @@ import { Usage as ReactGridTest } from "./ReactGridTest.js";
 import { Usage as BlurOverlay } from "./BlurOverlay.js";
 
 import { Usage as RenderModal } from "./RenderModalBoilerplate/index.js";
-//test
+
+import { Usage as CanvasDatagrid } from "./CanvasDatagrid.js";
 
 const MyDiv = ({ children, title }) => (
   <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
@@ -31,9 +32,13 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      <MyDiv title={"Render Modal"}>
+      <MyDiv title={"Canvas Datagrid"}>
+        <CanvasDatagrid />
+      </MyDiv>
+      {/*<MyDiv title={"Render Modal"}>
         <RenderModal />
       </MyDiv>
+      */}
       {/**
          * <MyDiv title={"BlurOverlay"}>
         <BlurOverlay />

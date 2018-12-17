@@ -43,7 +43,7 @@ class RenderModal extends React.Component {
     }, 2000);
   };
   render() {
-    const { renderTrigger } = this.props;
+    const { renderTrigger, closeIcon = false } = this.props;
     const { newNameInputValue, errors = [], isOpen = false } = this.state;
     return (
       <Modal
@@ -59,6 +59,15 @@ class RenderModal extends React.Component {
           openModal: this.openModal
         })}
       >
+        {closeIcon && (
+          <Icon
+            name={"close"}
+            className={"close"}
+            onClick={() => {
+              this.closeModal();
+            }}
+          />
+        )}
         <Modal.Header>Header</Modal.Header>
         <Modal.Content>
           {errors.length > 0 && (
@@ -102,8 +111,8 @@ class RenderModal extends React.Component {
   }
 }
 RenderModal.propTypes = {
-  setSelectedGroupIndex: PropTypes.func.isRequired,
-  selectedGroupIndex: PropTypes.number.isRequired
+  renderTrigger: PropTypes.func.isRequired,
+  closeIcon: PropTypes.bool
 };
 
 // const mapStateToProps = state => ({
@@ -123,6 +132,7 @@ export default RenderModal;
 
 export const Usage = () => (
   <RenderModal
+    closeIcon
     renderTrigger={({ openModal }) => (
       <div
         onClick={() => {
