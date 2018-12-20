@@ -20,7 +20,7 @@ import { Usage as BlurOverlay } from "./BlurOverlay.js";
 
 import { Usage as RenderModal } from "./RenderModalBoilerplate/index.js";
 
-import { Usage as CanvasDatagrid } from "./CanvasDatagrid.js";
+import { Usage as PlaceSearch } from "./PlaceSearch";
 
 const MyDiv = ({ children, title }) => (
   <div style={{ border: "2px solid black", padding: "10px", margin: "10px" }}>
@@ -32,8 +32,8 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      <MyDiv title={"Canvas Datagrid"}>
-        <CanvasDatagrid />
+      <MyDiv title={"Place Search"}>
+        <PlaceSearch />
       </MyDiv>
       {/*<MyDiv title={"Render Modal"}>
         <RenderModal />

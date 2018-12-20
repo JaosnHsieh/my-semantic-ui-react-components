@@ -5,7 +5,9 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
+    "axios": "^0.18.0",
     "canvas-datagrid": "0.22.3",
+    "faker": "^4.1.0",
     "lodash": "4.17.11",
     "prop-types": "15.5.10",
     "react": "16.5.2",
@@ -13,7 +15,7 @@
     "react-grid-layout": "0.16.6",
     "react-scripts": "2.1.1",
     "semantic-ui-css": "^2.4.1",
-    "semantic-ui-react": "0.83.0"
+    "semantic-ui-react": "^0.84.0"
   },
   "devDependencies": {},
   "scripts": {
