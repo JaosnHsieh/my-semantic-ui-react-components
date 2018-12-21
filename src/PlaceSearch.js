@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
-import faker from "faker";
 import request from "axios";
+import ClickOutside from "react-click-outside";
+
 import {
   Search,
   Loader,
@@ -190,6 +191,16 @@ export default class PlaceSearch extends Component {
   setIsResultOpen = (bool = false) => {
     this.setState({ isResultOpen: bool });
   };
+  onClickOutside = () => {
+    if (this.state.isResultOpen) {
+      this.setIsResultOpen(false);
+    }
+  };
+  onFocus = () => {
+    if (!this.state.isResultOpen) {
+      this.setIsResultOpen(true);
+    }
+  };
 
   render() {
     const {
@@ -212,16 +223,19 @@ export default class PlaceSearch extends Component {
     ])(results);
 
     return (
-      <Search
-        size={size}
-        loading={isLoading}
-        // onResultSelect={this.onResultSelect}
-        onSearchChange={this.handleSearchChange}
-        results={patchedResults}
-        value={keyword}
-        open={isResultOpen}
-        {...otherProps}
-      />
+      <ClickOutside onClickOutside={this.onClickOutside}>
+        <Search
+          size={size}
+          loading={isLoading}
+          onFocus={this.onFocus}
+          // onResultSelect={this.onResultSelect}
+          onSearchChange={this.handleSearchChange}
+          results={patchedResults}
+          value={keyword}
+          open={isResultOpen}
+          {...otherProps}
+        />
+      </ClickOutside>
     );
   }
 }
@@ -239,6 +253,7 @@ PlaceSearch.defaultProps = {
 
 export const Usage = () => (
   <PlaceSearch
+    size={"big"}
     countryCodes={"TW,US"}
     onResultSelect={(
       result,
