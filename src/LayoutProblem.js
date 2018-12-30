@@ -1,6 +1,11 @@
+/** this layout problem has been solved by ReactDOM.portal and render props pattern on 2018.12.30
+ *            <SimplePortal mountNodeId="searchInputEleId">
+                {SearchBar}
+              </SimplePortal>
+ */
 import React from "react";
 import PaginationTable from "./PaginationTable";
-import { Usage } from "./PaginationTable";
+import SimplePortal from "./SimplePortal";
 
 let tt;
 export default () => (
@@ -8,13 +13,13 @@ export default () => (
     Container Area
     <div style={{ border: "2px solid blue", marginTop: "10px" }}>
       Tool bar Area
-      <div>
-        <h1> move Search Input overe here!! </h1>{" "}
-      </div>
-      <button> save</button>
+      <div id="searchInputEleId" />
+      <h1>
+        {`YA!! moved <PaginationTable> Search Input over here even it's outside of <PaginationTable> component by ReactDOM.portal`}
+      </h1>
     </div>
     <div style={{ border: "2px solid black", marginTop: "10px" }}>
-      {`PaginationTable Aread`}
+      {`<PaginationTable> Area`}
       <PaginationTable
         items={[
           {
@@ -51,7 +56,7 @@ export default () => (
             sortingField: "name"
           }
         ]}
-        initSortingField={"id"}
+        initSortingFields={["id"]}
         initSortingOrderAsc={false}
         pagination
         itemsPerPage={2}
@@ -60,8 +65,10 @@ export default () => (
         {({ SearchBar, TableEle, PaginationBar }) => {
           return (
             <div>
+              <SimplePortal mountNodeId="searchInputEleId">
+                {SearchBar}
+              </SimplePortal>
               {PaginationBar}
-              {SearchBar}
               {TableEle}
             </div>
           );

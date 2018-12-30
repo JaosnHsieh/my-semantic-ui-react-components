@@ -5,7 +5,7 @@ import { Usage as PaginationTableUsage } from "./PaginationTable";
 import { Usage2 as PaginationTableUsage2 } from "./PaginationTable";
 import { Usage3 as PaginationTableUsage3 } from "./PaginationTable";
 import { Usage4 as PaginationTableUsage4 } from "./PaginationTable";
-// import LayoutProblem from "./LayoutProblem.js";
+import LayoutProblem from "./LayoutProblem.js";
 import { Usage as OrderableList } from "./OrderableList";
 
 import { Usage as EditableText } from "./EditableText.js";
@@ -17,6 +17,7 @@ import { Usage as VerticalMenu } from "./VerticalMenu.js";
 import { Usage as ReactGridTest } from "./ReactGridTest.js";
 
 import { Usage as BlurOverlay } from "./BlurOverlay.js";
+import { Usage as SimplePortal } from "./SimplePortal.js";
 
 import { Usage as RenderModal } from "./RenderModalBoilerplate/index.js";
 
@@ -32,9 +33,12 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      <MyDiv title={"Place Search"}>
-        <PlaceSearch />
+      <MyDiv title={"LayoutProblem"}>
+        <LayoutProblem />
       </MyDiv>
+      {/* <MyDiv title={"Place Search"}>
+        <PlaceSearch />
+      </MyDiv> */}
       {/* <MyDiv title={"Canvas Datagrid"}>
         <CanvasDatagrid />
       </MyDiv> */}
@@ -48,6 +52,9 @@ function App() {
       </MyDiv>
          */}
 
+      {/* <MyDiv title={"BlurOverlay"}>
+        <BlurOverlay />
+      </MyDiv> */}
       {/**
       <MyDiv title={"Orderable List"}>
         <OrderableList />
