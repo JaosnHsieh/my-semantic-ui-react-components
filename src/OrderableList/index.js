@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Message } from "semantic-ui-react";
+import _ from "lodash";
 import LeftItems from "./LeftItems";
 import RightItems from "./RightItems";
 import { defaultTotalHeight, defaultRightToolBarHeight } from "./constants";
@@ -82,7 +83,9 @@ class OrderableList extends Component {
           {...this.props.rightItemsProps}
           renderSelectedToolBar={this.props.renderSelectedToolBar}
           rightToolBarHeight={
-            this.props.rightToolBarHeight || defaultRightToolBarHeight
+            _.isNumber(this.props.rightToolBarHeight)
+              ? this.props.rightToolBarHeight
+              : defaultRightToolBarHeight
           }
           totalHeight={this.props.totalHeight || defaultTotalHeight}
           onItemsChanged={this.onRightItemsChanged}

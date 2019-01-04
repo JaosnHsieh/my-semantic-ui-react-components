@@ -33,9 +33,12 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      <MyDiv title={"LayoutProblem"}>
-        <LayoutProblem />
+      <MyDiv title={"Orderable List"}>
+        <OrderableList />
       </MyDiv>
+      {/* <MyDiv title={"LayoutProblem"}>
+        <LayoutProblem />
+      </MyDiv> */}
       {/* <MyDiv title={"Place Search"}>
         <PlaceSearch />
       </MyDiv> */}
@@ -56,9 +59,7 @@ function App() {
         <BlurOverlay />
       </MyDiv> */}
       {/**
-      <MyDiv title={"Orderable List"}>
-        <OrderableList />
-      </MyDiv>
+      
       <MyDiv title={"react grid test"}>
         <ReactGridTest />
       </MyDiv>

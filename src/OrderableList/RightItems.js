@@ -122,8 +122,9 @@ class RightItems extends Component {
       searchProperties
     );
     const totalHeight = this.props.totalHeight || defaultTotalHeight;
-    const rightToolBarHeight =
-      this.props.rightToolBarHeight || defaultRightToolBarHeight;
+    const rightToolBarHeight = _.isNumber(this.props.rightToolBarHeight)
+      ? this.props.rightToolBarHeight
+      : defaultRightToolBarHeight;
 
     const isSelected = !_.isNil(this.state.activeSelectedItemIndex);
     const moveButtonGroup = (
