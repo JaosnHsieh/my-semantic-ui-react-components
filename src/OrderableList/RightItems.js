@@ -222,7 +222,7 @@ class RightItems extends Component {
         width={1000}
         autoSize
         verticalCompact
-        compactType={"horizontal"}
+        compactType={"vertical"}
         isResizable={false}
         preventCollision={false}
         onLayoutChange={layout => {
