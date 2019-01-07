@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Message } from "semantic-ui-react";
+import { Message, Dropdown, Ref } from "semantic-ui-react";
 import _ from "lodash";
 import LeftItems from "./LeftItems";
 import RightItems from "./RightItems";
@@ -291,6 +291,131 @@ export const Usage2 = class Usage extends Component {
           )
         }}
       />
+    );
+  }
+};
+
+// Usage 3 : fixed inline Dropdown style problem and No RightToolBar
+
+const friendOptions = [
+  {
+    text: "Jenny Hess",
+    value: 1,
+    image: { avatar: true, src: "https://via.placeholder.com/150" }
+  },
+  {
+    text: "Jenny Hess2",
+    value: 2,
+    image: { avatar: true, src: "https://via.placeholder.com/150" }
+  },
+  {
+    text: "Jenny Hess3",
+    value: 3,
+    image: { avatar: true, src: "https://via.placeholder.com/150" }
+  }
+];
+export const Usage3 = class Usage extends Component {
+  state = {
+    dropdowns: [],
+    dropdownValue: 1,
+    leftItems: [
+      { id: 1, name: "name1" },
+      { id: 2, name: "name2" },
+      { id: 3, name: "name3" }
+    ],
+    rightItems: [
+      { id: 5, name: "name5" },
+      { id: 6, name: "name6" },
+      { id: 7, name: "name7" },
+      { id: 8, name: "name8" },
+      { id: 9, name: "name9" }
+    ],
+    gridLayout: [] // if dragAndDropOptions.isDragAndDropOn is true, this is a must for saving items
+  };
+  saveRightItems = () => {
+    console.log(
+      OrderableList.gridLayoutToCorrectItems(
+        this.state.gridLayout,
+        this.state.rightItems
+      )
+    );
+  };
+  render() {
+    return (
+      <React.Fragment>
+        <button onClick={this.saveRightItems}>Save right items</button>
+        <OrderableList
+          dragAndDropOptions={{
+            isDragAndDropOn: true,
+            saveGridLayout: layout => {
+              this.setState({ gridLayout: layout });
+            },
+            gridLayout: this.state.gridLayout
+          }}
+          totalHeight={500}
+          rightToolBarHeight={0}
+          leftItems={this.state.leftItems}
+          onLeftItemsChanged={items => {
+            this.setState({ leftItems: items }, () => {
+              console.log("on left items changed items", items);
+            });
+          }}
+          leftItemsProps={{
+            title: "left title",
+            itemValuePropertyName: "name"
+          }}
+          rightItems={this.state.rightItems}
+          onRightItemsChanged={items => {
+            this.setState({ rightItems: items }, () => {
+              console.log("on right items changed items", items);
+            });
+          }}
+          renderSelectedToolBar={({
+            moveButtonGroup,
+            activeItem,
+            activeItemIndex
+          }) => null}
+          rightItemsProps={{
+            renderTitle: () => (
+              <span>Total got {`${this.state.rightItems.length}`}</span>
+            ),
+            renderItem: (item, index) => (
+              <span>
+                <Ref
+                  innerRef={ref => {
+                    if (ref) {
+                      this.state.dropdowns[index] = ref;
+                    }
+                  }}
+                >
+                  {/* <span>{`No. ${index + 1}`}</span> */}
+                  <Dropdown
+                    upward={false}
+                    inline
+                    onOpen={() => {
+                      this.state.dropdowns[index].closest(
+                        "div.react-grid-item"
+                      ).style.zIndex = 3;
+                    }}
+                    onClose={() => {
+                      this.state.dropdowns[index].closest(
+                        "div.react-grid-item"
+                      ).style.zIndex = 0;
+                    }}
+                    item
+                    options={friendOptions}
+                    value={this.state.dropdownValue}
+                    onChange={(e, { value }) => {
+                      this.setState({ dropdownValue: value });
+                    }}
+                  />
+                </Ref>
+                {`id: ${item.id} name: ${item.name}`}
+              </span>
+            )
+          }}
+        />
+      </React.Fragment>
     );
   }
 };

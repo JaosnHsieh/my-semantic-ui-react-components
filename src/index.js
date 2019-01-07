@@ -6,7 +6,7 @@ import { Usage2 as PaginationTableUsage2 } from "./PaginationTable";
 import { Usage3 as PaginationTableUsage3 } from "./PaginationTable";
 import { Usage4 as PaginationTableUsage4 } from "./PaginationTable";
 import LayoutProblem from "./LayoutProblem.js";
-import { Usage as OrderableList } from "./OrderableList";
+import { Usage3 as OrderableList } from "./OrderableList";
 
 import { Usage as EditableText } from "./EditableText.js";
 
