@@ -8,9 +8,10 @@ import { Usage4 as PaginationTableUsage4 } from "./PaginationTable";
 import LayoutProblem from "./LayoutProblem.js";
 import { Usage3 as OrderableList } from "./OrderableList";
 
-import { Usage as EditableText } from "./EditableText.js";
-
-import { Usage2 as EditableText2 } from "./EditableText.js";
+import {
+  Usage as EditableText,
+  Usage2 as EditableText2
+} from "./EditableText.js";
 
 import { Usage as VerticalMenu } from "./VerticalMenu.js";
 
@@ -33,9 +34,17 @@ const MyDiv = ({ children, title }) => (
 function App() {
   return (
     <div className="App">
-      <MyDiv title={"Orderable List"}>
-        <OrderableList />
+      <MyDiv title={"EditableText1"}>
+        {" "}
+        <EditableText />
       </MyDiv>
+      <MyDiv title={"EditableText2"}>
+        {" "}
+        <EditableText2 />
+      </MyDiv>
+      {/* <MyDiv title={"Orderable List"}>
+        <OrderableList />
+      </MyDiv> */}
       {/* <MyDiv title={"LayoutProblem"}>
         <LayoutProblem />
       </MyDiv> */}

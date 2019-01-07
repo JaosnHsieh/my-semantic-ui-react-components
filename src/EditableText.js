@@ -11,7 +11,7 @@ const styles = {
     color: "white"
   }
 };
-class EditableTextContainer extends Component {
+class EditableText extends Component {
   constructor(props) {
     super(props);
     this.inputDomRef = React.createRef();
@@ -123,7 +123,7 @@ class EditableTextContainer extends Component {
   }
 }
 
-EditableTextContainer.propTypes = {
+EditableText.propTypes = {
   text: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired, // if return promise will wait for that
   size: PropTypes.string, // semantic Input, Button props
@@ -140,7 +140,8 @@ export class Usage extends React.Component {
   };
   render() {
     return (
-      <EditableTextContainer
+      <EditableText
+        isEditable={true}
         text={this.state.text}
         onSubmit={editedText =>
           //async action to call update api
@@ -153,7 +154,7 @@ export class Usage extends React.Component {
             }, 500);
           })
         }
-        size={"mini"}
+        size={"large"}
       />
     );
   }
@@ -165,14 +166,14 @@ export class Usage2 extends React.Component {
   };
   render() {
     return (
-      <EditableTextContainer
+      <EditableText
         text={this.state.text}
         onSubmit={editedText => {
           this.setState({
             text: editedText
           });
         }}
-        textStyle={{ color: "grey", fontSize: "10px" }}
+        textStyle={{ color: "grey", fontSize: "15px" }}
         size={"mini"}
         hasEditIcon
       />
@@ -180,4 +181,4 @@ export class Usage2 extends React.Component {
   }
 }
 
-export default EditableTextContainer;
+export default EditableText;
