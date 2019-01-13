@@ -1,1 +1,1 @@
-## moved to https://github.com/JaosnHsieh/my-semantic-ui-react-components.git
+## moved to https://github.com/JaosnHsieh/semantic-ui-react-misc-components
